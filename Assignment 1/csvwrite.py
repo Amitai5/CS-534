@@ -10,7 +10,7 @@ print 'File:', str(sys.argv[2])
 
 size = int(sys.argv[1]);
 
-arr = np.zeros((size,size));
+arr = np.zeros((size, size));
 
 for x in range(0, size):
     pos = random.randint(0, size-1)
@@ -20,4 +20,4 @@ for x in range(0, size):
 
 print arr
 
-np.savetxt( str(sys.argv[2])+'.csv',arr, fmt='%i',delimiter=',')
+np.savetxt( str(sys.argv[2])+'.csv', arr, fmt='%i',delimiter=',')
