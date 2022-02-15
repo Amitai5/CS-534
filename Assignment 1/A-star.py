@@ -1,7 +1,6 @@
 import csv
 
 #load board
-
 with open('test.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
 
@@ -21,6 +20,7 @@ while True:
 
     #Generate successors
     for i in range(1,size):
+        total est = getMoveCost(array,successor)+heuristic(successor)
         print(i,array[i][i]);
 
     #If solved exit
