@@ -20,4 +20,4 @@ for x in range(0, size):
 
 print arr
 
-np.savetxt( str(sys.argv[2])+'.csv', arr, fmt='%i',delimiter=',')
+np.savetxt( "HeavyQBoards/"+str(sys.argv[2])+'.csv', arr, fmt='%i',delimiter=',')
