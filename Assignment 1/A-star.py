@@ -26,8 +26,8 @@ class queueTools:
     def exists(self, item):
         return item in (x[1] for x in self.h)
 
-    def isEmpty(self):
-        return len(self.h)==0
+    def len(self):
+        return len(self.h)
 
 size = 0
 # load board
@@ -47,10 +47,10 @@ closed = queueTools();
 est_cost = 0+heuristic(array)
 frontier.add(est_cost, array)
 
-print(not frontier.isEmpty())
+print(frontier.len())
 
 # while not solved
-while True:#not (frontier.isEmpty): #no f-cking clue why this doesnt run, when the print above it does
+while frontier.len():
 # open lowest cost
     print("get")
     b = frontier.get();
