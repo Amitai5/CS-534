@@ -148,6 +148,9 @@ while frontier.len():
 # open lowest cost
     print("get")
     b = frontier.get();
+    if b is None:
+        print("Search over")
+        exit()
     openBoard = b[1]
     print(b);
     print(frontier.exists(b))
@@ -157,7 +160,7 @@ while frontier.len():
     n=0
     n2=0
     # Generate successors - I think this works well (or at least passably, not 100% sure), except that the comparison is always false , not actually checking array elements
-    for i in range(0,size):#each column
+    for i in range(0,size-1):#each column
         print("arr"+str(i))
         pos = 0
         val = 0
@@ -180,7 +183,8 @@ while frontier.len():
                 closedList.append(sucString)
                 n2=n2+1
                 h = heuristic(successor);
-                if(h==0):
+                if h==0:
+                    print("COMPLETE")
                     exit();
                 est_cost = cost(array, successor) + h
                 frontier.add(est_cost, successor)
@@ -198,6 +202,7 @@ while frontier.len():
 #   print(q.get())
 
 
+#<<<<<<< HEAD
 # def solveQueens(self, n: int) -> List[List[str]]:
 #     col = set()
 #     posDiag = set()  # (r + c)
@@ -231,3 +236,38 @@ while frontier.len():
 #             board[r][c] = "Q"
 #     backtrack(0)
 #     return res
+# =======
+# def solveQueens(self, n: int) -> list[list[str]]:
+#     col = set()
+#     posDiag = set()  # (r + c)
+#     negDiag = set()  # (r - c)
+#
+#
+# res = []
+# board = [["."] * n for i in range(n)]
+#
+#
+# def backtrack(r):
+#     if r == n:
+#         copy = ["".join(row) for row in board]
+#         res.append(copy)
+#         return
+#
+#         for c in range(n):
+#             if c in col or (r + c) in posDiag or (r - c) in negDiag:
+#                 continue
+#
+#             col.add(c)
+#             posDiag.add(r + c)
+#             negDiag.add(r - c)
+#             board[r][c] = "Q"
+#
+#             backtrack(r + 1)
+#
+#             col.remove(c)
+#             posDiag.remove(r + c)
+#             negDiag.remove(r - c)
+#             board[r][c] = "Q"
+#     backtrack(0)
+#     return res
+# >>>>>>> main
