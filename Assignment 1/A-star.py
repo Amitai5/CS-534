@@ -2,6 +2,7 @@ import csv
 import heapq
 import random
 import numpy
+import copy
 
 #@adeline please fill in these functions:
 import numpy as np
@@ -160,20 +161,20 @@ while frontier.len():
     n=0
     n2=0
     # Generate successors - I think this works well (or at least passably, not 100% sure), except that the comparison is always false , not actually checking array elements
-    for i in range(0,size-1):#each column
+    for i in range(0,size):#each column
         print("arr"+str(i))
         pos = 0
         val = 0
-        for k in range(0, size-1):
+        for k in range(0, size):
             if int(openBoard[k][i]) != 0:
                 pos = k
                 val = openBoard[k][i]
                 #print("VAL: "+str(val)+" at "+str(k)+" "+str(i))
                 break
-        for j in range(0,size-1): #each row
+        for j in range(0,size): #each row
             if j == pos:
                 continue
-            successor = openBoard
+            successor = copy.deepcopy(openBoard)
             successor[j][i] = val
             successor[pos][i] = 0
             n=n+1
@@ -186,7 +187,9 @@ while frontier.len():
                 if h==0:
                     print("COMPLETE")
                     exit();
-                est_cost = cost(array, successor) + h
+                c = cost(array, successor)
+                print("h: "+str(h)+" c: "+str(c))
+                est_cost = c + h
                 frontier.add(est_cost, successor)
 
     print("Successors "+str(n)+" added "+str(n2))
