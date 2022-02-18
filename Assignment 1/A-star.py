@@ -9,12 +9,12 @@ import numpy as np
 
 def heuristic(b):
     v = moveVector(b) #move vector and row vector
-    w = weightVector(b) #weight vector
+    #w = weightVector(b) #weight vector
     d1 = diag1Vector(v) #diag1 vector
     d2 = diag2Vector(v) #diag2 vector
 
     print("move vector: ", v)
-    print("weight vector: ", w)
+    #print("weight vector: ", w)
     print("d1 vector: ", d1)
     print("d2 vector: ", d2)
 
@@ -34,10 +34,18 @@ def heuristic(b):
 def cost(base,new):
     b = moveVector(base)
     n = moveVector(new)
-    w = weightVector(base)
+    #w = weightVector(base)
+
+    print("Base: ", base)
+    print("new: ", new)
+
+    print("b: ", b)
+    print("n: ", n)
 
     moveCost = np.absolute(np.array(b) - np.array(n))
-    moveCost = moveCost * w
+    print("Move cost: ", moveCost)
+    print("w^2: ", np.square(np.array(w)))
+    moveCost = np.multiply(moveCost, np.square(np.array(w)))
     moveCost = moveCost.sum()
 
     return moveCost
@@ -62,8 +70,8 @@ def weightVector(b):
     x = []
     for i in range(size):
         for j in range(size):
-            if b[i][j] != 0:
-                x.append(int(b[i][j]))
+            if b[j][i] != 0:
+                x.append(int(b[j][i]))
     #print(x)
     return x
 
@@ -102,6 +110,7 @@ class queueTools:
         return len(self.h)
 
 size = 0
+w = []
 # load board
 with open('HeavyQBoards/test.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -120,6 +129,9 @@ with open('HeavyQBoards/test.csv', newline='') as csvfile:
 
     print(array)
     print("Size ", size)
+    print(range(size))
+    w = weightVector(array)
+    print(w)
 
 frontier = queueTools()
 closed = queueTools();
@@ -186,36 +198,36 @@ while frontier.len():
 #   print(q.get())
 
 
-def solveQueens(self, n: int) -> List[List[str]]:
-    col = set()
-    posDiag = set()  # (r + c)
-    negDiag = set()  # (r - c)
-
-
-res = []
-board = [["."] * n for i in range(n)]
-
-
-def backtrack(r):
-    if r == n:
-        copy = ["".join(row) for row in board]
-        res.append(copy)
-        return
-
-        for c in range(n):
-            if c in col or (r + c) in posDiag or (r - c) in negDiag:
-                continue
-
-            col.add(c)
-            posDiag.add(r + c)
-            negDiag.add(r - c)
-            board[r][c] = "Q"
-
-            backtrack(r + 1)
-
-            col.remove(c)
-            posDiag.remove(r + c)
-            negDiag.remove(r - c)
-            board[r][c] = "Q"
-    backtrack(0)
-    return res
+# def solveQueens(self, n: int) -> List[List[str]]:
+#     col = set()
+#     posDiag = set()  # (r + c)
+#     negDiag = set()  # (r - c)
+#
+#
+# res = []
+# board = [["."] * n for i in range(n)]
+#
+#
+# def backtrack(r):
+#     if r == n:
+#         copy = ["".join(row) for row in board]
+#         res.append(copy)
+#         return
+#
+#         for c in range(n):
+#             if c in col or (r + c) in posDiag or (r - c) in negDiag:
+#                 continue
+#
+#             col.add(c)
+#             posDiag.add(r + c)
+#             negDiag.add(r - c)
+#             board[r][c] = "Q"
+#
+#             backtrack(r + 1)
+#
+#             col.remove(c)
+#             posDiag.remove(r + c)
+#             negDiag.remove(r - c)
+#             board[r][c] = "Q"
+#     backtrack(0)
+#     return res
