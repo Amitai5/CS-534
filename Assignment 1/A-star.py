@@ -4,11 +4,68 @@ import random
 import numpy
 
 #@adeline please fill in these functions:
+import numpy as np
+
+
 def heuristic(b):
+    v = moveVector(b) #move vector and row vector
+    w = weightVector(b) #weight vector
+    d1 = diag1Vector(v) #diag1 vector
+    d2 = diag2Vector(v) #diag2 vector
+    hc = 0
+
+    for i in range(v.len):
+        for j in range(v.len - i):
+            if v[i] == v[j + i]:
+                hc = hc + w[i] + w[j + i]
+            if d1[i] == d1[i + j]:
+                hc = hc + w[i] + w[j + i]
+            if d2[i] == d2[i + j]:
+                hc = hc + w[i] + w[j + i]
+    return hc
+
+
     return random.randint(1, 9)
 
 def cost(base,new):
-    return random.randint(1, 9)
+    b = moveVector(base)
+    n = moveVector(new)
+    w = weightVector(base)
+
+    moveCost = np.absolute(b - n)
+    moveCost = moveCost * w
+    moveCost = moveCost.sum()
+
+    return moveCost
+
+def moveVector(b):
+    x = []
+    for i in b:
+        for j in i:
+            if b[i][j] != 0:
+                x.append(j)
+    return x
+
+def weightVector(b):
+    x = []
+    for i in b:
+        for j in i:
+            if b[i][j] != 0:
+                x.append(b[i][j])
+    return x
+
+def diag1Vector(mv):
+    d1 = []
+    for i in range(mv.len):
+        d1.append(i - mv[i])
+    return d1
+
+def diag2Vector(mv):
+    d2 = []
+    for i in range(mv.len):
+        d2.append(i + mv[i])
+    return d2
+
 
 # ' Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
 class queueTools:
@@ -96,3 +153,38 @@ while frontier.len():
 # q.put( (2, 6) )
 # while not q.empty():
 #   print(q.get())
+
+
+def solveQueens(self, n: int) -> List[List[str]]:
+    col = set()
+    posDiag = set()  # (r + c)
+    negDiag = set()  # (r - c)
+
+
+res = []
+board = [["."] * n for i in range(n)]
+
+
+def backtrack(r):
+    if r == n:
+        copy = ["".join(row) for row in board]
+        res.append(copy)
+        return
+
+        for c in range(n):
+            if c in col or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+
+            col.add(c)
+            posDiag.add(r + c)
+            negDiag.add(r - c)
+            board[r][c] = "Q"
+
+            backtrack(r + 1)
+
+            col.remove(c)
+            posDiag.remove(r + c)
+            negDiag.remove(r - c)
+            board[r][c] = "Q"
+    backtrack(0)
+    return res
