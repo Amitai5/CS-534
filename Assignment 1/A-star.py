@@ -44,10 +44,10 @@ def cost(base,new):
 
 def getBoardString(b):
     mv = moveVector(b)
-    str = ""
+    bString = ""
     for i in mv:
-        "" + i
-    return str
+        bString = bString + str(i)
+    return bString
 
 def moveVector(b):
     x = []
@@ -123,9 +123,11 @@ with open('HeavyQBoards/test.csv', newline='') as csvfile:
 
 frontier = queueTools()
 closed = queueTools();
+closedList = [];
 # add 1st node
 est_cost = 0+heuristic(array)
 frontier.add(est_cost, array)
+closedList.append(getBoardString(array))
 
 print(frontier.len())
 
@@ -161,7 +163,9 @@ while frontier.len():
             successor[pos][i] = 0
             n=n+1
             print("SUC "+str(n)+" " +str(successor))
-            if not closed.exists(successor):#this is the part that doesn't work
+            sucString = getBoardString(successor)
+            if not sucString in closedList:#this is the part that doesn't work
+                closedList.append(sucString)
                 n2=n2+1
                 h = heuristic(successor);
                 if(h==0):
