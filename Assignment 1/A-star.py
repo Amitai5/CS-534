@@ -12,6 +12,12 @@ def heuristic(b):
     w = weightVector(b) #weight vector
     d1 = diag1Vector(v) #diag1 vector
     d2 = diag2Vector(v) #diag2 vector
+
+    print("move vector: ", v)
+    print("weight vector: ", w)
+    print("d1 vector: ", d1)
+    print("d2 vector: ", d2)
+
     hc = 0
 
     for i in range(size):
@@ -35,6 +41,13 @@ def cost(base,new):
     moveCost = moveCost.sum()
 
     return moveCost
+
+def getBoardString(b):
+    mv = moveVector(b)
+    str = ""
+    for i in mv:
+        "" + i
+    return str
 
 def moveVector(b):
     x = []
