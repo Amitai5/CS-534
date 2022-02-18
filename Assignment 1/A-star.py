@@ -14,14 +14,15 @@ def heuristic(b):
     d2 = diag2Vector(v) #diag2 vector
     hc = 0
 
-    for i in range(v.len):
-        for j in range(v.len - i):
+    for i in range(size):
+        for j in range(size - i):
             if v[i] == v[j + i]:
                 hc = hc + w[i] + w[j + i]
             if d1[i] == d1[i + j]:
                 hc = hc + w[i] + w[j + i]
             if d2[i] == d2[i + j]:
                 hc = hc + w[i] + w[j + i]
+    print("hc: ", hc)
     return hc
 
 
@@ -32,7 +33,7 @@ def cost(base,new):
     n = moveVector(new)
     w = weightVector(base)
 
-    moveCost = np.absolute(b - n)
+    moveCost = np.absolute(np.array(b) - np.array(n))
     moveCost = moveCost * w
     moveCost = moveCost.sum()
 
@@ -40,30 +41,34 @@ def cost(base,new):
 
 def moveVector(b):
     x = []
-    for i in b:
-        for j in i:
+    for i in range(size):
+        for j in range(size):
             if b[i][j] != 0:
                 x.append(j)
+    #print("Move vector: ", x)
     return x
 
 def weightVector(b):
     x = []
-    for i in b:
-        for j in i:
+    for i in range(size):
+        for j in range(size):
             if b[i][j] != 0:
-                x.append(b[i][j])
+                x.append(int(b[i][j]))
+    #print(x)
     return x
 
 def diag1Vector(mv):
     d1 = []
-    for i in range(mv.len):
+    for i in range(size):
         d1.append(i - mv[i])
+    #print(d1)
     return d1
 
 def diag2Vector(mv):
     d2 = []
-    for i in range(mv.len):
+    for i in range(size):
         d2.append(i + mv[i])
+    #print(d2)
     return d2
 
 
@@ -92,11 +97,19 @@ with open('HeavyQBoards/test.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
 
     array = list(reader)
+    #array = int(array)
+
+
 
     size = len(array)
 
+    for i in range(0, size):
+        for j in range(0, size):
+            array[i][j] = int(array[i][j])
+            print(array[i][j])
+
     print(array)
-    print(size)
+    print("Size ", size)
 
 frontier = queueTools()
 closed = queueTools();
