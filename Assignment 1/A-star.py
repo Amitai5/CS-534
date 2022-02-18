@@ -136,6 +136,9 @@ while frontier.len():
 # open lowest cost
     print("get")
     b = frontier.get();
+    if b is None:
+        print("Search over")
+        exit()
     openBoard = b[1]
     print(b);
     print(frontier.exists(b))
@@ -145,7 +148,7 @@ while frontier.len():
     n=0
     n2=0
     # Generate successors - I think this works well (or at least passably, not 100% sure), except that the comparison is always false , not actually checking array elements
-    for i in range(0,size):#each column
+    for i in range(0,size-1):#each column
         print("arr"+str(i))
         pos = 0
         val = 0
@@ -168,7 +171,8 @@ while frontier.len():
                 closedList.append(sucString)
                 n2=n2+1
                 h = heuristic(successor);
-                if(h==0):
+                if h==0:
+                    print("COMPLETE")
                     exit();
                 est_cost = cost(array, successor) + h
                 frontier.add(est_cost, successor)
@@ -186,7 +190,7 @@ while frontier.len():
 #   print(q.get())
 
 
-def solveQueens(self, n: int) -> List[List[str]]:
+def solveQueens(self, n: int) -> list[list[str]]:
     col = set()
     posDiag = set()  # (r + c)
     negDiag = set()  # (r - c)
