@@ -53,7 +53,7 @@ def moveVector(b):
     x = []
     for i in range(size):
         for j in range(size):
-            if b[i][j] != 0:
+            if b[j][i] != 0:
                 x.append(j)
     #print("Move vector: ", x)
     return x
