@@ -25,9 +25,6 @@ def heuristic(b):
     print("hc: ", hc)
     return hc
 
-
-    return random.randint(1, 9)
-
 def cost(base,new):
     b = moveVector(base)
     n = moveVector(new)
@@ -137,14 +134,15 @@ while frontier.len():
         print("arr"+str(i))
         pos = 0
         val = 0
-        for k in range(0, size):
+        for k in range(0, size-1):
             if int(openBoard[k][i]) != 0:
                 pos = k
                 val = openBoard[k][i]
-                print("VAL: "+str(val)+" at "+str(k)+" "+str(i))
+                #print("VAL: "+str(val)+" at "+str(k)+" "+str(i))
                 break
-        for j in range(0,size): #each row
-            if j == pos:                continue
+        for j in range(0,size-1): #each row
+            if j == pos:
+                continue
             successor = openBoard
             successor[j][i] = val
             successor[pos][i] = 0
@@ -152,7 +150,10 @@ while frontier.len():
             print("SUC "+str(n)+" " +str(successor))
             if not closed.exists(successor):#this is the part that doesn't work
                 n2=n2+1
-                est_cost = cost(array, successor) + heuristic(successor)
+                h = heuristic(successor);
+                if(h==0):
+                    exit();
+                est_cost = cost(array, successor) + h
                 frontier.add(est_cost, successor)
 
     print("Successors "+str(n)+" added "+str(n2))
