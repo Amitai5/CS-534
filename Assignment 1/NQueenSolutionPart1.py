@@ -10,10 +10,10 @@ import numpy as np
 
 
 def heuristic(b):
-    v = moveVector(b) #move vector and row vector
+     #move vector and row vector
     #w = weightVector(b) #weight vector
-    d1 = diag1Vector(v) #diag1 vector
-    d2 = diag2Vector(v) #diag2 vector
+    d1 = diag1Vector(b) #diag1 vector
+    d2 = diag2Vector(b) #diag2 vector
 
    # print("move vector: ", v)
     #print("weight vector: ", w)
@@ -24,7 +24,7 @@ def heuristic(b):
 
     for i in range(size):
         for j in range(1, size - i):
-            if v[i] == v[j + i]:
+            if b[i] == b[j + i]:
                 hc = hc + w[i] + w[j + i]
             if d1[i] == d1[i + j]:
                 hc = hc + w[i] + w[j + i]
@@ -34,8 +34,8 @@ def heuristic(b):
     return hc
 
 def cost(base,new):
-    b = moveVector(base)
-    n = moveVector(new)
+    b = base
+    n = new
     #w = weightVector(base)
 
     #print("Base: ", base)
@@ -53,9 +53,8 @@ def cost(base,new):
     return moveCost
 
 def getBoardString(b):
-    mv = moveVector(b)
     bString = ""
-    for i in mv:
+    for i in b:
         bString = bString + str(i)
     return bString
 
@@ -90,6 +89,19 @@ def diag2Vector(mv):
         d2.append(i + mv[i])
     #print(d2)
     return d2
+
+def mvToBoard(mv):
+    string = ""
+    for i in range(size):
+        for j in range(size):
+            if mv[i] == j:
+                string = string + " " +str(w[i]) + " "
+            else:
+                string = string + " 0 "
+            if j == size - 1:
+                string = string + "\n"
+    return string
+
 
 
 # ' Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
@@ -134,10 +146,12 @@ with open('HeavyQBoards/test.csv', newline='') as csvfile:
     w = weightVector(array)
     print(w)
 
+array = moveVector(array)
+
 frontier = queueTools()
-closed = queueTools();
+closed = queueTools() #maybe delete
 solution = (-1,array)
-closedList = [];
+closedList = []
 # add 1st node
 est_cost = 0+heuristic(array)
 frontier.add(est_cost, array)
@@ -160,8 +174,14 @@ while frontier.len():
             print("A* search")
             print("Greedy: "+str(sys.argv[1]))
             print("Cost: "+str(solution[0])+"\n")
-        print("Board:\n"+str(solution[1]))
-        np.savetxt("HeavyQBoards/ANSWER.csv", solution[1], fmt='%i', delimiter=',')
+        print("Solution position vector:\n"+str(solution[1]))
+        stringSol = mvToBoard(solution[1])
+        print(stringSol)
+        text_file = open("HeavyQBoards/ANSWER.txt", "w")
+        n = text_file.write(stringSol)
+        text_file.close()
+
+        #np.savetxt("HeavyQBoards/ANSWER.csv", stringSol, fmt='%i', delimiter=',')
         exit()
     openBoard = b[1]
     print(b);
@@ -175,17 +195,13 @@ while frontier.len():
     for i in range(0,size):#each column
         pos = 0
         val = 0
-        for k in range(0, size):
-            if int(openBoard[k][i]) != 0:
-                pos = k
-                val = openBoard[k][i]
-                break
+        pos = openBoard[i]
+        val = w[i];
         for j in range(0,size): #each row
             if j == pos:
                 continue
             successor = copy.deepcopy(openBoard)
-            successor[j][i] = val
-            successor[pos][i] = 0
+            successor[i] = j
             n=n+1
             #print("SUC "+str(n)+" " +str(successor))
             sucString = getBoardString(successor)
