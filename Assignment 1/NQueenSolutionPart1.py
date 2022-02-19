@@ -4,6 +4,7 @@ import time
 import copy
 import heapq
 import numpy as np
+import math
 
 
 def heuristic(b):
@@ -170,18 +171,11 @@ while frontier.len():
         val = 0
         pos = openBoard[i]
         val = w[i]
-        for j in range(0, 2):  # each row
+        for j in range(-int(math.sqrt(size)), int(math.sqrt(size))+1):  # each row
+            if j == 0 or pos+j == size or pos-j<0:
+                continue
             successor = copy.deepcopy(openBoard)
-            if j == 0:
-                if successor[i] - 1 < 0:
-                    continue
-                else:
-                    successor[i] = successor[i] - 1
-            else:
-                if successor[i] + 1 >= size:
-                    continue
-                else:
-                    successor[i] = successor[i] + 1
+            successor[i] = pos+j
 
             n = n + 1
             sucString = getBoardString(successor)
