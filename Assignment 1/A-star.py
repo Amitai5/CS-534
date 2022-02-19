@@ -14,22 +14,22 @@ def heuristic(b):
     d1 = diag1Vector(v) #diag1 vector
     d2 = diag2Vector(v) #diag2 vector
 
-    print("move vector: ", v)
+   # print("move vector: ", v)
     #print("weight vector: ", w)
-    print("d1 vector: ", d1)
-    print("d2 vector: ", d2)
+    #print("d1 vector: ", d1)
+   # print("d2 vector: ", d2)
 
     hc = 0
 
     for i in range(size):
-        for j in range(size - i):
+        for j in range(1, size - i):
             if v[i] == v[j + i]:
                 hc = hc + w[i] + w[j + i]
             if d1[i] == d1[i + j]:
                 hc = hc + w[i] + w[j + i]
             if d2[i] == d2[i + j]:
                 hc = hc + w[i] + w[j + i]
-    print("hc: ", hc)
+    #print("hc: ", hc)
     return hc
 
 def cost(base,new):
@@ -37,15 +37,15 @@ def cost(base,new):
     n = moveVector(new)
     #w = weightVector(base)
 
-    print("Base: ", base)
-    print("new: ", new)
+    #print("Base: ", base)
+    #print("new: ", new)
 
-    print("b: ", b)
-    print("n: ", n)
+    #print("b: ", b)
+    #print("n: ", n)
 
     moveCost = np.absolute(np.array(b) - np.array(n))
-    print("Move cost: ", moveCost)
-    print("w^2: ", np.square(np.array(w)))
+    #print("Move cost: ", moveCost)
+   # print("w^2: ", np.square(np.array(w)))
     moveCost = np.multiply(moveCost, np.square(np.array(w)))
     moveCost = moveCost.sum()
 
@@ -136,6 +136,7 @@ with open('HeavyQBoards/test.csv', newline='') as csvfile:
 
 frontier = queueTools()
 closed = queueTools();
+solution = (-1,array)
 closedList = [];
 # add 1st node
 est_cost = 0+heuristic(array)
@@ -151,6 +152,12 @@ while frontier.len():
     b = frontier.get();
     if b is None:
         print("Search over")
+        exit()
+    if solution[0] != -1 and b[0] > solution[0]:
+        print("Search complete\n")
+        print("Cost: "+str(solution[0])+"\n")
+        print("Board:\n"+str(solution[1]))
+        np.savetxt("HeavyQBoards/ANSWER.csv", solution[1], fmt='%i', delimiter=',')
         exit()
     openBoard = b[1]
     print(b);
@@ -169,7 +176,6 @@ while frontier.len():
             if int(openBoard[k][i]) != 0:
                 pos = k
                 val = openBoard[k][i]
-                #print("VAL: "+str(val)+" at "+str(k)+" "+str(i))
                 break
         for j in range(0,size): #each row
             if j == pos:
@@ -178,19 +184,22 @@ while frontier.len():
             successor[j][i] = val
             successor[pos][i] = 0
             n=n+1
-            print("SUC "+str(n)+" " +str(successor))
+            #print("SUC "+str(n)+" " +str(successor))
             sucString = getBoardString(successor)
-            if not sucString in closedList:#this is the part that doesn't work
+            if not sucString in closedList:#Works now
                 closedList.append(sucString)
-                n2=n2+1
+                n2 = n2+1
                 h = heuristic(successor);
-                if h==0:
-                    print("COMPLETE")
-                    exit();
                 c = cost(array, successor)
                 print("h: "+str(h)+" c: "+str(c))
-                est_cost = c + h
-                frontier.add(est_cost, successor)
+                if h == 0:
+                    print("FOUND")
+                    #Replace solution if cheaper
+                    if solution[0] == -1 or c<solution[0]:
+                        solution = (c, successor)
+                else:
+                    est_cost = c + h
+                    frontier.add(est_cost, successor)
 
     print("Successors "+str(n)+" added "+str(n2))
     # If solved exit
