@@ -3,6 +3,7 @@ import heapq
 import random
 import numpy
 import copy
+import sys
 
 #@adeline please fill in these functions:
 import numpy as np
@@ -110,6 +111,10 @@ class queueTools:
     def len(self):
         return len(self.h)
 
+
+#Main code
+greedy = int(sys.argv[1])
+
 size = 0
 w = []
 # load board
@@ -153,9 +158,15 @@ while frontier.len():
     if b is None:
         print("Search over")
         exit()
-    if solution[0] != -1 and b[0] > solution[0]:
+    if solution[0] != -1 and (b[0] > solution[0] or greedy == 1):
         print("Search complete\n")
-        print("Cost: "+str(solution[0])+"\n")
+        if greedy == 1:
+            print("Greedy search")
+            print("Cost: " + str(cost(array,solution[1])) + "\n")
+        else:
+            print("A* search")
+            print("Greedy: "+str(sys.argv[1]))
+            print("Cost: "+str(solution[0])+"\n")
         print("Board:\n"+str(solution[1]))
         np.savetxt("HeavyQBoards/ANSWER.csv", solution[1], fmt='%i', delimiter=',')
         exit()
@@ -189,8 +200,11 @@ while frontier.len():
             if not sucString in closedList:#Works now
                 closedList.append(sucString)
                 n2 = n2+1
-                h = heuristic(successor);
-                c = cost(array, successor)
+                h = heuristic(successor)
+                c = 0
+                if greedy != 1:
+                    #print("A*")
+                    c = cost(array, successor)
                 print("h: "+str(h)+" c: "+str(c))
                 if h == 0:
                     print("FOUND")
