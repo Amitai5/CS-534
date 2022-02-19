@@ -9,7 +9,23 @@ import time
 def attacks(b):
     numAttacks = 0
     for i in range(size):
-        for(b[i][0] in b):
+        x0 = b[i][0]
+        y0 = b[i][1]
+        for x in range(x0+1,size):
+            if (x,y0) in b:
+                numAttacks+=1
+                #print("row")
+        for y in range(y0+1, size):
+            if (x0, y) in b:
+                numAttacks += 1
+                #print("col")
+        for d in range(1, size):
+            if (x0+d, y0+d) in b:
+                numAttacks += 1
+                #print("d+ "+str(x0+d)+ " "+str(y0+d))
+            if (x0+d, y0-d) in b:
+                numAttacks += 1
+                #print("d- " + str(x0 + d) + " " + str(y0 - d))
 
     return numAttacks
 
@@ -54,6 +70,8 @@ while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
         print("Cols")
         #diag
 
+
+print(attacks(boardArrayXY))
 
 #a = [(5,6),(2,3),(4,5)]
 #b = (2,4)
