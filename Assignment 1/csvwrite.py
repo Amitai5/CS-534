@@ -18,6 +18,6 @@ for x in range(0, size):
     print("generated position: "+str(pos)+" and weight "+str(weight))
     arr[pos][x]=weight
 
-print( arr)
+print(arr)
 
 np.savetxt("HeavyQBoards/"+str(sys.argv[2])+'.csv', arr, fmt='%i', delimiter=',')
