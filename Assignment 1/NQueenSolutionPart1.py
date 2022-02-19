@@ -2,8 +2,6 @@ import csv
 import sys
 import copy
 import heapq
-import numpy
-import random
 import numpy as np
 
 
