@@ -8,9 +8,9 @@ print( 'Argument List:', str(sys.argv))
 print( 'Size:', str(sys.argv[1]))
 print('File:', str(sys.argv[2]))
 
-size = int(sys.argv[1]);
+size = int(sys.argv[1])
 
-arr = np.zeros((size, size));
+arr = np.zeros((size, size))
 
 for x in range(0, size):
     pos = random.randint(0, size-1)
@@ -18,6 +18,6 @@ for x in range(0, size):
     print("generated position: "+str(pos)+" and weight "+str(weight))
     arr[pos][x]=weight
 
-print( arr)
+print(arr)
 
 np.savetxt("HeavyQBoards/"+str(sys.argv[2])+'.csv', arr, fmt='%i', delimiter=',')
