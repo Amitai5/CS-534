@@ -170,11 +170,19 @@ while frontier.len():
         val = 0
         pos = openBoard[i]
         val = w[i]
-        for j in range(0, size):  # each row
-            if j == pos:
-                continue
+        for j in range(0, 2):  # each row
             successor = copy.deepcopy(openBoard)
-            successor[i] = j
+            if j == 0:
+                if successor[i] - 1 < 0:
+                    continue
+                else:
+                    successor[i] = successor[i] - 1
+            else:
+                if successor[i] + 1 >= size:
+                    continue
+                else:
+                    successor[i] = successor[i] + 1
+
             n = n + 1
             sucString = getBoardString(successor)
             if not sucString in closedList:  # Works now
