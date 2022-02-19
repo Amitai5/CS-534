@@ -103,11 +103,6 @@ class queueTools:
     def get(self):
         return heapq.heappop(self.h)
 
-    #Yes, I copied this from stackoverflow: https://stackoverflow.com/questions/18181818/python-priority-queue-checking-to-see-if-item-exists-without-looping
-    #and it doesnt work, need to figure out a reasonable check
-    def exists(self, item):
-        return item in (x[1] for x in self.h)
-
     def len(self):
         return len(self.h)
 
@@ -148,8 +143,6 @@ est_cost = 0+heuristic(array)
 frontier.add(est_cost, array)
 closedList.append(getBoardString(array))
 
-print(frontier.len())
-
 # while not solved
 while frontier.len():
 # open lowest cost
@@ -172,7 +165,7 @@ while frontier.len():
         exit()
     openBoard = b[1]
     print(b);
-    print(frontier.exists(b))
+    #print(frontier.exists(b))
     # switch it to closed
     closed.add(b[0], [b[1]])
 
@@ -180,7 +173,6 @@ while frontier.len():
     n2=0
     # Generate successors - I think this works well (or at least passably, not 100% sure), except that the comparison is always false , not actually checking array elements
     for i in range(0,size):#each column
-        print("arr"+str(i))
         pos = 0
         val = 0
         for k in range(0, size):
