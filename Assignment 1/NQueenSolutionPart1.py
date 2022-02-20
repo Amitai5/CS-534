@@ -1,13 +1,20 @@
 import csv
 import sys
 import time
+import math
 import copy
 import heapq
 import numpy as np
-import math
+
+# create globals
+size = 0
+w = []
 
 
 def heuristic(b):
+    global size
+    global w
+
     # w = weightVector(b) #weight vector
     d1 = diag1Vector(b)  # diag1 vector
     d2 = diag2Vector(b)  # diag2 vector
@@ -25,6 +32,9 @@ def heuristic(b):
 
 
 def cost(base, new):
+    global size
+    global w
+
     b = base
     n = new
     moveCost = np.absolute(np.array(b) - np.array(n))
@@ -59,6 +69,9 @@ def weightVector(b):
 
 
 def diag1Vector(mv):
+    global size
+    global w
+
     d1 = []
     for i in range(size):
         d1.append(i - mv[i])
@@ -66,6 +79,9 @@ def diag1Vector(mv):
 
 
 def diag2Vector(mv):
+    global size
+    global w
+
     d2 = []
     for i in range(size):
         d2.append(i + mv[i])
@@ -73,6 +89,9 @@ def diag2Vector(mv):
 
 
 def mvToBoard(mv):
+    global size
+    global w
+
     string = ""
     for i in range(size):
         for j in range(size):
@@ -100,100 +119,96 @@ class queueTools:
         return len(self.h)
 
 
-# Main code
-greedy = int(sys.argv[1])
-start_time = time.time()
+def findSolution(is_greedy, should_print):
+    start_time = time.time()
+    global size
+    global w
 
-size = 0
-w = []
+    # load board
+    with open('HeavyQBoards/test.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        array = list(reader)
+        size = len(array)
 
-# load board
-with open('HeavyQBoards/test.csv', newline='') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    array = list(reader)
-    size = len(array)
+        for i in range(0, size):
+            for j in range(0, size):
+                array[i][j] = int(array[i][j])
+        w = weightVector(array)
 
-    for i in range(0, size):
-        for j in range(0, size):
-            array[i][j] = int(array[i][j])
+    array = moveVector(array)
+    frontier = queueTools()
+    closed = queueTools()  # maybe delete
+    solution = (-1, array)
+    closedList = []
 
-    print("Size ", size)
-    w = weightVector(array)
-    print("Weight Vector: ", w)
+    # add 1st node
+    est_cost = 0 + heuristic(array)
+    frontier.add(est_cost, array)
+    closedList.append(getBoardString(array))
 
-array = moveVector(array)
-frontier = queueTools()
-closed = queueTools()  # maybe delete
-solution = (-1, array)
-closedList = []
-
-# add 1st node
-est_cost = 0 + heuristic(array)
-frontier.add(est_cost, array)
-closedList.append(getBoardString(array))
-
-# while not solved
-while frontier.len():
-    b = frontier.get()
-    if b is None:
-        print("Search over")
-        exit()
-    if solution[0] != -1 and (b[0] > solution[0] or greedy == 1):
-        print("Search Complete...")
-        print("\n\n---------------Search Results---------------")
-        print("Board Size: ", size)
-        board_string = mvToBoard(solution[1])
-        print("Board: \n" + board_string + "\n")
-
-        if greedy == 1:
-            print("Greedy search")
-            print("Cost: " + str(cost(array, solution[1])) + "\n")
-        else:
-            print("A* search")
-            print("Cost: " + str(solution[0]))
-
-        elapsed_time = time.time() - start_time
-        print("Time Elapsed: " + str(round(elapsed_time, 5)) + " sec.")
-        text_file = open("HeavyQBoards/ANSWER.txt", "w")
-        n = text_file.write(board_string)
-        text_file.close()
-        exit()
-    openBoard = b[1]
-
-    # switch it to closed
-    closed.add(b[0], [b[1]])
-    n2 = 0
-    n = 0
-
-    # Generate successors
-    for i in range(0, size):  # each column
-        pos = 0
-        val = 0
-        pos = openBoard[i]
-        val = w[i]
-        for j in range(-int(math.sqrt(size)), int(math.sqrt(size))+1):  # each row
-            if j == 0 or pos+j == size or pos-j<0:
-                continue
-            successor = copy.deepcopy(openBoard)
-            successor[i] = pos+j
-
-            n = n + 1
-            sucString = getBoardString(successor)
-            if not sucString in closedList:  # Works now
-                closedList.append(sucString)
-                n2 = n2 + 1
-                h = heuristic(successor)
-                c = 0
-                if greedy != 1:
-                    c = cost(array, successor)
-                if h == 0:
-                    print("FOUND")
-                    if solution[0] == -1 or c < solution[0]:  # Replace solution if cheaper
-                        solution = (c, successor)
+    # while not solved
+    while frontier.len():
+        b = frontier.get()
+        if b is None:
+            if should_print:
+                print("Search over")
+            return -1
+        if solution[0] != -1 and (b[0] > solution[0] or is_greedy == 1):
+            board_string = mvToBoard(solution[1])
+            elapsed_time = time.time() - start_time
+            if should_print:
+                print("Search Complete...")
+                print("\n\n---------------Search Results---------------")
+                print("Board Size: ", size)
+                print("Board: \n" + board_string + "\n")
+                if is_greedy == 1:
+                    print("Greedy search")
+                    print("Cost: " + str(cost(array, solution[1])) + "\n")
                 else:
-                    est_cost = c + h
-                    frontier.add(est_cost, successor)
+                    print("A* search")
+                    print("Cost: " + str(solution[0]))
+                print("Time Elapsed: " + str(round(elapsed_time, 5)) + " sec.")
 
-    print("Successors " + str(n) + " added " + str(n2) + " new nodes")
-    # If solved exit
-    # break
+            text_file = open("HeavyQBoards/ANSWER.txt", "w")
+            n = text_file.write(board_string)
+            text_file.close()
+            return elapsed_time
+
+        openBoard = b[1]
+        closed.add(b[0], [b[1]])
+        n2 = 0
+        n = 0
+
+        # Generate successors
+        for i in range(0, size):  # each column
+            pos = 0
+            val = 0
+            pos = openBoard[i]
+            val = w[i]
+            for j in range(-int(math.sqrt(size)), int(math.sqrt(size)) + 1):  # each row
+                if j == 0 or pos + j == size or pos - j < 0:
+                    continue
+                successor = copy.deepcopy(openBoard)
+                successor[i] = pos + j
+
+                n = n + 1
+                sucString = getBoardString(successor)
+                if not sucString in closedList:  # Works now
+                    closedList.append(sucString)
+                    n2 = n2 + 1
+                    h = heuristic(successor)
+                    c = 0
+                    if is_greedy != 1:
+                        c = cost(array, successor)
+                    if h == 0:
+                        if should_print:
+                            print("FOUND")
+                        if solution[0] == -1 or c < solution[0]:  # Replace solution if cheaper
+                            solution = (c, successor)
+                    else:
+                        est_cost = c + h
+                        frontier.add(est_cost, successor)
+        if should_print:
+            print("Successors " + str(n) + " added " + str(n2) + " new nodes")
+        # If solved exit
+        # break
