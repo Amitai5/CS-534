@@ -52,11 +52,11 @@ def boardstring(b):
 boardArrayXY = []
 boardWeight = []
 
-#parameters for search
+#parameters for search - Tuned for size 16 board and 20 second run time
 minIncrease = 25 #How much the solution must be improved to keep climbing instead of restarting - does not like being much larger than 100
-sideMoves = 1 #how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
-maxMovesFactor = 1.0 #measure of how many queens should be moved at maximum during random restart (multiplies by size)
-minMoves = 3 #minimum number of queens to move during random restart (absolute number)
+sideMoves = 0 #how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
+maxMovesFactor = 0.75 #measure of how many queens should be moved at maximum during random restart (multiplies by size)
+minMoves = 0 #minimum number of queens to move during random restart (absolute number)
 
 with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
