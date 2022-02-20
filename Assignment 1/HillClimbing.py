@@ -53,8 +53,10 @@ boardArrayXY = []
 boardWeight = []
 
 #parameters for search
-minIncrease = 75 #How much the solution must be improved to keep climbing instead of restarting
+minIncrease = 25 #How much the solution must be improved to keep climbing instead of restarting - does not like being much larger than 100
 sideMoves = 1 #how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
+maxMovesFactor = 1.0 #measure of how many queens should be moved at maximum during random restart (multiplies by size)
+minMoves = 3 #minimum number of queens to move during random restart (absolute number)
 
 with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -89,7 +91,7 @@ while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
     openBoard = copy.deepcopy(boardArrayXY);
 
     #random moves here
-    nrand = random.randint(0, size-1)#Can tune this paremeter, how many attempts to move a queen
+    nrand = random.randint(minMoves, int((size-1)*maxMovesFactor))#Can tune this paremeter, how many attempts to move a queen
     while nrand>0:
         n = random.randint(0, len(openBoard)-1)
         y = random.randint(0, size-1)
