@@ -5,6 +5,7 @@ import numpy
 import copy
 import sys
 import time
+import math
 
 def attacks(b):
     numAttacks = 0
@@ -61,17 +62,47 @@ solution = (0, attacks(boardArrayXY),boardArrayXY)
 
 start = time.time()
 while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
-    h = []
     print("running")
-    for i in boardArrayXY:
-        #rows
-        print("Rows")
-        #cols
-        print("Cols")
-        #diag
+    lastCost = -1
+    tempSolution = (0,0,0);
+    openBoard = copy.deepcopy(boardArrayXY);
+    print(openBoard)
+    #random moves here ----
+    #---
 
+    while lastCost == -1 or tempSolution[1]-lastCost >= 0:#run while improvements happen
+        h = []
+        n = 0
+        print("Continue")
+        lastCost = attacks(openBoard)
+
+        for i in range(0,len(openBoard)):  # each column
+            pos = openBoard[i][1]
+            for j in range(-int(math.sqrt(size)), int(math.sqrt(size)) + 1):  # each row
+                if j == 0 or pos + j == size or pos - j < 0 or ((openBoard[i][0], pos+j) in openBoard):
+                    continue
+                successor = copy.deepcopy(openBoard)
+                successor[i] = (openBoard[i][0], pos + j)
+                n = n + 1
+
+                heapq.heappush(h, (attacks(successor), successor))
+
+        print("Successors " + str(n) + " added")
+        best = heapq.heappop(h)
+        print(best)
+        tempSolution = (0, best[0], best[1])
+        if solution[1] > tempSolution[1]:
+            solution = tempSolution
+
+        openBoard = tempSolution[2]
+        print(openBoard)
+        print(tempSolution[1])
+        print(lastCost)
+
+    print("RESET")
 
 print(attacks(boardArrayXY))
+print(solution[1])
 
 #a = [(5,6),(2,3),(4,5)]
 #b = (2,4)
