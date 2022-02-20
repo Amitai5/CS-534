@@ -35,6 +35,7 @@ def cost(b1):
     c = 0
     for p in range(0, len(b1)):
         c += abs(b1[p][0]-boardArrayXY[p][0])*boardWeight[p]**2
+        c += abs(b1[p][1] - boardArrayXY[p][1]) * boardWeight[p] ** 2
     return c
 
 
@@ -50,6 +51,10 @@ def boardstring(b):
 # load board
 boardArrayXY = []
 boardWeight = []
+
+#parameters for search
+minIncrease = 75 #How much the solution must be improved to keep climbing instead of restarting
+sideMoves = 1 #how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
 
 with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -82,8 +87,8 @@ while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
     lastCost = -1
     tempSolution = (0,0,0);
     openBoard = copy.deepcopy(boardArrayXY);
-    print(openBoard)
-    #random moves here ----
+
+    #random moves here
     nrand = random.randint(0, size-1)#Can tune this paremeter, how many attempts to move a queen
     while nrand>0:
         n = random.randint(0, len(openBoard)-1)
@@ -92,12 +97,21 @@ while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
         if not (newCoord in openBoard):
             nrand -= 1
             openBoard[n] = newCoord
-    #---
+    # Sideways moves
+    nrand = sideMoves # Can tune this parameter, how many queens moved sideways
+    while nrand > 0:
+        n = random.randint(0, len(openBoard) - 1)
+        x = random.randint(0, size - 1)
+        newCoord = (openBoard[n][1], x)
+        if not (newCoord in openBoard):
+            nrand -= 1
+            openBoard[n] = newCoord
 
-    while lastCost == -1 or lastCost-tempSolution[1] > 0:#run while improvements happen
+    while lastCost == -1 or lastCost-tempSolution[1] > minIncrease:#run while improvements happen
         h = []
         n = 0
-        print("Continue")
+        if(lastCost!=-1):
+            print("Continue: gain of "+str(lastCost-tempSolution[1]))
         lastCost = attacks(openBoard)+cost(openBoard)
 
         for i in range(0,len(openBoard)):  # each column
@@ -108,22 +122,16 @@ while(time.time()-start < int(sys.argv[1])): #less time elapsed than total
                 successor = copy.deepcopy(openBoard)
                 successor[i] = (pos+j, openBoard[i][1])
                 n = n + 1
-                print(successor)
-                print("COST: "+str(cost(successor)))
-
                 heapq.heappush(h, (attacks(successor)+cost(successor), successor))
 
-        print("Successors " + str(n) + " added")
+        #print("Successors " + str(n) + " added")
         best = heapq.heappop(h)
-        print(best)
+
         tempSolution = (0, best[0], best[1])
         if solution[1] > tempSolution[1]:
             solution = tempSolution
 
         openBoard = tempSolution[2]
-        print("OB: "+str(openBoard))
-        print("TS1: " + str(tempSolution[1]))
-        print("Last cost: "+str(lastCost))
 
     print("RESET")
     numBoards += 1
