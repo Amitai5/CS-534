@@ -16,38 +16,18 @@ best = []
 elite = []
 ss = []
 k = 0
-
-with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
-
-    reader = csv.reader(csvfile, delimiter=',')
-
-    array = list(reader)
-
-    size = len(array)
-    n = size
-
-    for i in range(0, size):
-        for j in range(0, size):
-            array[i][j] = int(array[i][j])
-
-    print(array)
-    print("Size ", size)
-
-    for y in range(0,size):
-        for x in range(0, size):
-            if array[x][y]!=0:
-                boardArrayXY.append([x, y])
-                w.append(array[x][y])
-print(boardArrayXY)
-print(w)
+size = 0
 
 
 
-def geneticAlg(b):
+
+
+def geneticAlg(run_time, board_size, should_print):
     global array
     global w
     global nq
     global n
+    global size
     global ss
     global elite
     global best
@@ -131,17 +111,21 @@ def geneticAlg(b):
         #print(ss)
         ss.sort(key=lambda x: x[1], reverse=True)
         #print(ss)
+        if ss[0][1] > best[1]:
+            best = copy.deepcopy(ss[0])
+            print("New best fit: ", best[1])
         for i in range(int(math.sqrt(len(ss)))):
             elite.append(copy.deepcopy(ss[i]))
-        if elite[0][1] > best[1]:
-            best = copy.deepcopy(elite[0])
-            print("New best fit: ", best[1])
+
+        print(elite)
+        print(best)
+
 
 
     def cull(): #remove the weakest pop
         for i in range(int(len(ss) / k)):
             if len(ss) != 0:
-                print("pop")
+                #print("pop")
                 ss.pop(-1)
 
     def checkElite(s):
@@ -159,24 +143,30 @@ def geneticAlg(b):
     def swapColumn(v1, v2, col):
         #v3 = copy.deepcopy(v1)
         #v4 = copy.deepcopy(v2)
+        #print(col)
+        #print("v1: ", v1, "\nv2: ", v2)
         v1c = []
         v2c = []
         v1c.append(v1[:][col])
         v2c.append(v2[:][col])
+        #print("v1c: ", v1c, "\nv2c: ", v2c)
         for i in range(len(v1c)):
             ti = copy.deepcopy(v1c[i])
-            v1c[i] = copy.deepcopy(v2c[i])
-            v2c = ti
+            ind = v1.index(v1c[i])
+            v1[ind] = copy.deepcopy(v2c[i])
+            v2[ind] = copy.deepcopy(ti)
+        #print("v1: ", v1, "\nv2: ", v2)
 
     def scramble(s1, s2):
         random.randint(0, 100)
-        p1 = s1[1] / (s1[1] + s2[1])
-        p2 = s2[1] / (s1[1] + s2[1])
-        for i in random.shuffle(range(n)):
+        p1 = s1[1] / (s1[1] + s2[1]) * 100
+        p2 = s2[1] / (s1[1] + s2[1]) * 100
+        for i in range(n):
             r = random.randint(0, 100)
             if(r <= p1):
                 swapColumn(s1[0], s2[0], i)
             elif r >= p2:
+                #print("yo")
                 mutateCol(s1[0], i)
                 mutateCol(s2[0], i)
             checkElite(s1)
@@ -243,8 +233,32 @@ def geneticAlg(b):
             ss = ss + elite
             recurs()
 
+    with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
+
+        reader = csv.reader(csvfile, delimiter=',')
+
+        array = list(reader)
+
+        size = len(array)
+        n = size
+
+        for i in range(0, size):
+            for j in range(0, size):
+                array[i][j] = int(array[i][j])
+
+        print(array)
+        print("Size ", size)
+
+        for y in range(0, size):
+            for x in range(0, size):
+                if array[x][y] != 0:
+                    boardArrayXY.append([x, y])
+                    w.append(array[x][y])
+    print(boardArrayXY)
+    print(w)
+
     # n = len(b)
-    array = b
+    array = boardArrayXY
     nq = len(w)
     # starting heuristic cost (for fit calc)
     shc = attacks(array) + cost(array)  # cost(array) should be 0
@@ -267,4 +281,4 @@ def geneticAlg(b):
     # swap columns without needing to return, ideally. TODO: check
 
 
-geneticAlg(boardArrayXY)
+geneticAlg(0, 0, False)
