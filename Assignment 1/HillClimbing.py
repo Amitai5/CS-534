@@ -62,10 +62,10 @@ def findSolution(run_time, board_size, should_print):
     boardWeight = []
 
     # parameters for search - Tuned for size 16 board and 20 second run time
-    minIncrease = 25  # How much the solution must be improved to keep climbing instead of restarting - does not like being much larger than 100
-    sideMoves = 0  # how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
+    minIncrease = 125# How much the solution must be improved to keep climbing instead of restarting - does not like being much larger than 100
+    sideMoves = 3 # how many horizontal moves to make - seems to make it worse, maybe 1 is better, but any larger seems to average worse
     maxMovesFactor = 0.75  # measure of how many queens should be moved at maximum during random restart (multiplies by size)
-    minMoves = 0  # minimum number of queens to move during random restart (absolute number)
+    minMoves = 3  # minimum number of queens to move during random restart (absolute number)
 
     with open('HeavyQBoards/board.txt', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
