@@ -7,6 +7,8 @@ import heapq
 import numpy as np
 
 # create globals
+from csvwrite import create_board_csv
+
 size = 0
 w = []
 
@@ -21,14 +23,14 @@ def heuristic(b):
     hc = 0
 
     for i in range(size):
-        for j in range(1, size - i):
-            if b[i] == b[j + i]:
-                hc = hc + w[i] + w[j + i]
-            if d1[i] == d1[i + j]:
-                hc = hc + w[i] + w[j + i]
-            if d2[i] == d2[i + j]:
-                hc = hc + w[i] + w[j + i]
-    return hc
+        for j in range(i + 1, size):
+            if b[i] == b[j]:
+                hc = hc + w[i] + w[j]
+            if d1[i] == d1[j]:
+                hc = hc + w[i] + w[j]
+            if d2[i] == d2[j]:
+                hc = hc + w[i] + w[j]
+    return hc * 4
 
 
 def cost(base, new):
@@ -121,6 +123,8 @@ class queueTools:
 
 def findSolution(is_greedy, should_print):
     start_time = time.time()
+    total_opened = 0
+    total_added = 0
     global size
     global w
 
@@ -149,6 +153,7 @@ def findSolution(is_greedy, should_print):
     # while not solved
     while frontier.len():
         b = frontier.get()
+        total_opened += 1
         if b is None:
             if should_print:
                 print("Search over")
@@ -172,21 +177,22 @@ def findSolution(is_greedy, should_print):
             text_file = open("HeavyQBoards/ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
-            return elapsed_time
+            return elapsed_time, cost(array, solution[1]), (total_opened/total_added) * math.pow(size, 2)
 
         openBoard = b[1]
         closed.add(b[0], [b[1]])
-        n2 = 0
-        n = 0
+        n2 = 0 #num succ adding
+        n = 0 #num solutions
 
         # Generate successors
         for i in range(0, size):  # each column
+            total_added += 1
             pos = 0
             val = 0
             pos = openBoard[i]
             val = w[i]
             for j in range(-int(math.sqrt(size)), int(math.sqrt(size)) + 1):  # each row
-                if j == 0 or pos + j == size or pos - j < 0:
+                if j == 0 or pos + j >= size or pos + j < 0:
                     continue
                 successor = copy.deepcopy(openBoard)
                 successor[i] = pos + j
@@ -206,8 +212,7 @@ def findSolution(is_greedy, should_print):
                         if solution[0] == -1 or c < solution[0]:  # Replace solution if cheaper
                             solution = (c, successor)
                     else:
-                        est_cost = c + h
-                        frontier.add(est_cost, successor)
+                        frontier.add(c + h, successor)
         if should_print:
             print("Successors " + str(n) + " added " + str(n2) + " new nodes")
         # If solved exit
