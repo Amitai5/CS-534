@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Assignment 1/HeavyQBoards/test.csv
+Assignment 1/HeavyQBoards/ANSWER.txt
