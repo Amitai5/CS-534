@@ -19,9 +19,6 @@ k = 0
 size = 0
 
 
-
-
-
 def geneticAlg(run_time, board_size, should_print):
     global array
     global w
@@ -33,6 +30,17 @@ def geneticAlg(run_time, board_size, should_print):
     global best
     global k
 
+    boardArrayXY = []
+    array = []
+    w = []
+    nq = 0
+    n = 0
+    best = []
+    elite = []
+    ss = []
+    k = 0
+    size = 0
+
     def makeBoardVector(b):
         for i in range(n):
             for j in range(n):
@@ -40,19 +48,17 @@ def geneticAlg(run_time, board_size, should_print):
                     array.append([i, j])
                     w.append(b[j][i])
 
-    #makeBoardVector(b)
+    # makeBoardVector(b)
 
     def generateSuccessor(v):
         s = copy.deepcopy(v)
-        for x in range(int(math.sqrt(nq))): #generate sqrt(#of queen) queens to try and move
+        for x in range(int(math.sqrt(nq))):  # generate sqrt(#of queen) queens to try and move
             q = random.randint(0, nq - 1)  # queen to move
             ni = random.randint(0, n - 1)  # new row position
             newCoord = [ni, s[q][1]]
             if not (newCoord in s):
                 s[q] = newCoord
         return s
-
-
 
     def attacks(b):
         size = n
@@ -76,7 +82,7 @@ def geneticAlg(run_time, board_size, should_print):
                 if [x0 + d, y0 - d] in b:
                     numAttacks = numAttacks + 1
                     # print("d- " + str(x0 + d) + " " + str(y0 - d))
-       #print(numAttacks)
+        # print(numAttacks)
 
         return numAttacks * 100
 
@@ -91,13 +97,13 @@ def geneticAlg(run_time, board_size, should_print):
         return attacks(v) + moveCost(v)
 
     def fit(v):
-        return 0 - (attacks(v) + moveCost(v))
+        return 0 - cost(v)
 
     def generateSuccessors(v):
         global best
         for i in range(k):  # generate initial successors
-            s = generateSuccessor(v) #successor to add
-            sf = fit(s) #fit of current successor
+            s = generateSuccessor(v)  # successor to add
+            sf = fit(s)  # fit of current successor
             s = [s, sf]
             if s not in ss:
                 if sf > best[1]:
@@ -106,19 +112,20 @@ def geneticAlg(run_time, board_size, should_print):
                     best = copy.deepcopy(s)
                 ss.append(s)
 
-    def setElite(): #keep the strongest org
+    def setElite():  # keep the strongest org
         global best
         global elite
         elite = []
-        #sortFit(ss)
-        #print("About to sort")
-        #print(ss)
+        # sortFit(ss)
+        # print("About to sort")
+        # print(ss)
         ss.sort(key=lambda x: x[1], reverse=True)
-        #print(ss)
+        # print(ss)
         if ss[0][1] > best[1]:
             best = copy.deepcopy(ss[0])
             if should_print:
                 print("New best fit: ", best[1])
+
         for i in range(int(math.sqrt(len(ss)))):
             elite.append(copy.deepcopy(ss[i]))
 
@@ -126,42 +133,36 @@ def geneticAlg(run_time, board_size, should_print):
             print(elite)
             print(best)
 
-
-
-    def cull(): #remove the weakest pop
+    def cull():  # remove the weakest pop
         for i in range(int(len(ss) / k)):
             if len(ss) != 0:
-                #print("pop")
                 ss.pop(-1)
 
     def checkElite(s):
         s[1] = fit(s[0])
-        #print("elite: ", elite)
+        # print("elite: ", elite)
         if s[1] > elite[-1][1]:
             elite.insert(0, copy.deepcopy(s))
 
     def sortFit(arr):
         return 0
-        #arr = zip(*arr)
-        #print("Hello, sorting!")
-        #arr.sort(key=lambda x: x[1])
 
     def swapColumn(v1, v2, col):
-        #v3 = copy.deepcopy(v1)
-        #v4 = copy.deepcopy(v2)
-        #print(col)
-        #print("v1: ", v1, "\nv2: ", v2)
+        # v3 = copy.deepcopy(v1)
+        # v4 = copy.deepcopy(v2)
+        # print(col)
+        # print("v1: ", v1, "\nv2: ", v2)
         v1c = []
         v2c = []
         v1c.append(v1[:][col])
         v2c.append(v2[:][col])
-        #print("v1c: ", v1c, "\nv2c: ", v2c)
+        # print("v1c: ", v1c, "\nv2c: ", v2c)
         for i in range(len(v1c)):
             ti = copy.deepcopy(v1c[i])
             ind = v1.index(v1c[i])
             v1[ind] = copy.deepcopy(v2c[i])
             v2[ind] = copy.deepcopy(ti)
-        #print("v1: ", v1, "\nv2: ", v2)
+        # print("v1: ", v1, "\nv2: ", v2)
 
     def scramble(s1, s2):
         random.randint(0, 100)
@@ -169,10 +170,10 @@ def geneticAlg(run_time, board_size, should_print):
         p2 = s2[1] / (s1[1] + s2[1]) * 100
         for i in range(n):
             r = random.randint(0, 100)
-            if(r <= p1):
+            if (r <= p1):
                 swapColumn(s1[0], s2[0], i)
             elif r >= p2:
-                #print("yo")
+                # print("yo")
                 mutateCol(s1[0], i)
                 mutateCol(s2[0], i)
             checkElite(s1)
@@ -192,7 +193,6 @@ def geneticAlg(run_time, board_size, should_print):
                 i = newCoord
 
     def vToBoard(v):
-
         string = ""
         for i in range(n):
             for j in range(n):
@@ -223,7 +223,6 @@ def geneticAlg(run_time, board_size, should_print):
         setElite()
         cull()
         for i in range(k):
-            #print("ss: ", ss)
             s1, s2 = random.choices(ss, k=2)
             scramble(s1, s2)
         ss = ss + elite
@@ -273,6 +272,3 @@ def geneticAlg(run_time, board_size, should_print):
         print("Final move cost: ", cost(best[0]))
         print(vToBoard(best[0]))
     return best[1], cost(best[0])
-
-    # v1: [i, j] [row, col] [[row1, col1] [row1, col1] [row 2, col2]]
-    # swap columns without needing to return, ideally. TODO: check

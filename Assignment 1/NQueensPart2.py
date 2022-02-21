@@ -10,11 +10,9 @@ max_run_times = [0.1, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20]
 
 def printResults(name, board_counts, board_attacks, cost_results):
     board_attack_result = np.round(np.mean(board_attacks, axis=0), 3)
-    board_count_result = np.round(np.mean(board_counts, axis=0), 3)
     cost_result = np.round(np.mean(cost_results, axis=0), 3)
 
     print("- " + name + " Board Attacks: " + str(board_attack_result))
-    print("- " + name + " Board Count: " + str(board_count_result))
     print("- " + name + " Cost: " + str(cost_result))
 
 
@@ -34,8 +32,7 @@ for run_time in max_run_times:
     for j in range(0, batch_size):
         csvwrite98.create_board_csv(board_size, "board.txt", False)
 
-        hillClimb_board_count, hillClimb_attack, hillClimb_cost = HillClimbing.findSolution(run_time, board_size, False)
-        hillClimb_board_counts.append(hillClimb_board_count)
+        hillClimb_attack, hillClimb_cost = HillClimbing.findSolution(run_time, board_size, False)
         hillClimb_attacks.append(hillClimb_attack)
         hillClimb_costs.append(hillClimb_cost)
 

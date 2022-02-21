@@ -135,4 +135,4 @@ def findSolution(run_time, board_size, should_print):
 
             openBoard = tempSolution[2]
         numBoards += 1
-    return numBoards, attacks(boardArrayXY), solution[1]
+    return attacks(boardArrayXY), solution[1]
