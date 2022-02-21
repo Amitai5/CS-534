@@ -220,7 +220,7 @@ def geneticAlg(run_time, board_size, should_print):
             #print("ss: ", ss)
             s1, s2 = random.choices(ss, k=2)
             scramble(s1, s2)
-        k = k - 1
+        #k = k - 1
 
         if k <= 1: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
             print("Finished")
