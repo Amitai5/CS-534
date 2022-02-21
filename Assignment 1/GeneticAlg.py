@@ -101,7 +101,8 @@ def geneticAlg(run_time, board_size, should_print):
             s = [s, sf]
             if s not in ss:
                 if sf > best[1]:
-                    print("initial new best found: ", sf)
+                    if should_print:
+                        print("initial new best found: ", sf)
                     best = copy.deepcopy(s)
                 ss.append(s)
 
@@ -116,12 +117,14 @@ def geneticAlg(run_time, board_size, should_print):
         #print(ss)
         if ss[0][1] > best[1]:
             best = copy.deepcopy(ss[0])
-            print("New best fit: ", best[1])
+            if should_print:
+                print("New best fit: ", best[1])
         for i in range(int(math.sqrt(len(ss)))):
             elite.append(copy.deepcopy(ss[i]))
 
-        #print(elite)
-        #print(best)
+        if should_print:
+            print(elite)
+            print(best)
 
 
 
@@ -206,7 +209,7 @@ def geneticAlg(run_time, board_size, should_print):
         for i in range(len(elite)):
             m = m + elite[i][1]
         m = m / len(elite)
-        if (m - best[1]) / best[1] < .1:
+        if (m - best[1]) / best[1] < .1 and should_print:
             print("I think we real close")
             print(best[1])
             return True
@@ -223,20 +226,11 @@ def geneticAlg(run_time, board_size, should_print):
             #print("ss: ", ss)
             s1, s2 = random.choices(ss, k=2)
             scramble(s1, s2)
-        #k = k - 1
-
-        # if k <= 1: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
-        #
-        # else:
         ss = ss + elite
-        recurs()
 
     with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
-
         reader = csv.reader(csvfile, delimiter=',')
-
         array = list(reader)
-
         size = len(array)
         n = size
 
@@ -244,16 +238,15 @@ def geneticAlg(run_time, board_size, should_print):
             for j in range(0, size):
                 array[i][j] = int(array[i][j])
 
-        # print(array)
-        # print("Size ", size)
+        if should_print:
+            print(array)
+            print("Size ", size)
 
         for y in range(0, size):
             for x in range(0, size):
                 if array[x][y] != 0:
                     boardArrayXY.append([x, y])
                     w.append(array[x][y])
-    print(boardArrayXY)
-    print(w)
 
     # n = len(b)
     array = boardArrayXY
@@ -268,26 +261,18 @@ def geneticAlg(run_time, board_size, should_print):
     startk = copy.deepcopy(k)
     generateSuccessors(array)
     start = time.time()
+
     while time.time() - start < run_time:
         recurs()
 
-    print("Finished")
-    print(best)
-    print("Initial fit: ", fit(array))
-    print("Final fit: ", best[1])
-    print("Final move cost: ", moveCost(best[0]))
-    print("Final cost: ", cost(best[0]))
-    
-    print(vToBoard(best[0]))
-
-
-
-
-
-
+    if should_print:
+        print("Finished")
+        print(best)
+        print("Initial fit: ", fit(array))
+        print("Final fit: ", best[1])
+        print("Final move cost: ", cost(best[0]))
+        print(vToBoard(best[0]))
+    return best[1], cost(best[0])
 
     # v1: [i, j] [row, col] [[row1, col1] [row1, col1] [row 2, col2]]
     # swap columns without needing to return, ideally. TODO: check
-
-
-geneticAlg(20, 20, False)

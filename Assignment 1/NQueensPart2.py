@@ -30,8 +30,7 @@ for run_time in max_run_times:
     hillClimb_board_counts = []
 
     genetics_costs = []
-    genetics_attacks = []
-    genetics_board_counts = []
+    genetics_fitnesses = []
     for j in range(0, batch_size):
         csvwrite98.create_board_csv(board_size, "board.txt", False)
 
@@ -40,11 +39,13 @@ for run_time in max_run_times:
         hillClimb_attacks.append(hillClimb_attack)
         hillClimb_costs.append(hillClimb_cost)
 
-        genetics_board_count, genetics_attack, genetics_cost = GeneticAlg.geneticAlg(run_time, board_size, False)
-        genetics_board_counts.append(genetics_board_count)
-        genetics_attacks.append(genetics_attack)
+        genetics_fitness, genetics_cost = GeneticAlg.geneticAlg(run_time, board_size, False)
+        genetics_fitnesses.append(genetics_fitness)
         genetics_costs.append(genetics_cost)
 
     printResults("Hill Climbing", hillClimb_board_counts, hillClimb_attacks, hillClimb_costs)
-    printResults("Genetics", genetics_board_counts, genetics_attacks, genetics_costs)
-    print("")
+
+    genetics_fitness_result = np.round(np.mean(genetics_fitnesses, axis=0), 3)
+    genetics_cost_result = np.round(np.mean(genetics_costs, axis=0), 3)
+    print("- Genetics Fitness: " + str(genetics_fitness_result))
+    print("- Genetics Cost: " + str(genetics_cost_result) + "\n")
