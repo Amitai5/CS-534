@@ -1,0 +1,13 @@
+CS 534 - Project Assignment #1
+
+Part 1:
+To run the program on any given board, place the "board.txt" file in the same directory as the python scripts
+Then run the python script titled, "NQueensPart1.py"
+The program should start and immediately you will see a comparison between A* and Greedy Search solving the board passed in through the file
+
+Part 2:
+To run the program on any given board, place the "board.txt" file in the same directory as the python scripts
+Then run the python script titled, "NQueensPart2.py"
+The program will then generate the graphs and comparisons between the Genetics Algorithm and Hill Climber on the board you passed in through the file
+
+Note: While the program may run off of the "NQueensPart1.py" or "NQueensPart2.py" scripts, the files are dependant on the other python scripts in the project. All python scripts in the project must be present in order for either of the main scripts to be able to run properly
