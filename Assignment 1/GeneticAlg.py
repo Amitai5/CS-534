@@ -7,6 +7,8 @@ import heapq
 import numpy as np
 import random
 
+
+interval_cost_updates = []
 boardArrayXY = []
 array = []
 w = []
@@ -19,7 +21,8 @@ k = 0
 size = 0
 
 
-def geneticAlg(run_time, board_size, should_print):
+def geneticAlg(run_time, should_print):
+    global interval_cost_updates
     global array
     global w
     global nq
@@ -30,6 +33,7 @@ def geneticAlg(run_time, board_size, should_print):
     global best
     global k
 
+    interval_cost_updates = []
     boardArrayXY = []
     array = []
     w = []
@@ -227,7 +231,7 @@ def geneticAlg(run_time, board_size, should_print):
             scramble(s1, s2)
         ss = ss + elite
 
-    with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
+    with open('board.txt', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         array = list(reader)
         size = len(array)
@@ -261,7 +265,13 @@ def geneticAlg(run_time, board_size, should_print):
     generateSuccessors(array)
     start = time.time()
 
+    has_hit = False
     while time.time() - start < run_time:
+        if int(time.time() - start) % 10 == 0 and not has_hit:
+            interval_cost_updates.append(cost(best[0]))
+            has_hit = True
+        if int(time.time() - start) % 10 == 1 and has_hit:
+            has_hit = False
         recurs()
 
     if should_print:
@@ -271,4 +281,4 @@ def geneticAlg(run_time, board_size, should_print):
         print("Final fit: ", best[1])
         print("Final move cost: ", cost(best[0]))
         print(vToBoard(best[0]))
-    return best[1], cost(best[0])
+    return best, cost(best[0])

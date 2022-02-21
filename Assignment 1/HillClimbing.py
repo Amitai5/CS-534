@@ -7,6 +7,8 @@ import sys
 import time
 import math
 
+
+interval_cost_updates = []
 boardArrayXY = []
 boardWeight = []
 size = 0
@@ -52,12 +54,13 @@ def boardstring(b):
     return str(arr)
 
 
-def findSolution(run_time, board_size, should_print):
+def findSolution(run_time, should_print):
+    global interval_cost_updates
     global boardArrayXY
     global boardWeight
     global size
 
-    size = board_size
+    interval_cost_updates = []
     boardArrayXY = []
     boardWeight = []
 
@@ -67,7 +70,7 @@ def findSolution(run_time, board_size, should_print):
     maxMovesFactor = 0.75  # measure of how many queens should be moved at maximum during random restart (multiplies by size)
     minMoves = 0  # minimum number of queens to move during random restart (absolute number)
 
-    with open('HeavyQBoards/board.txt', newline='') as csvfile:
+    with open('board.txt', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         array = list(reader)
         size = len(array)
@@ -86,7 +89,14 @@ def findSolution(run_time, board_size, should_print):
     start = time.time()
     numBoards = 1
 
+    has_hit = False
     while time.time() - start < run_time:  # less time elapsed than total
+        if int(time.time() - start) % 10 == 0 and not has_hit:
+            interval_cost_updates.append(solution[1])
+            has_hit = True
+        if int(time.time() - start) % 10 == 1 and has_hit:
+            has_hit = False
+
         lastCost = -1
         tempSolution = (0, 0, 0)
         openBoard = copy.deepcopy(boardArrayXY)

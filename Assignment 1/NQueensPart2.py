@@ -2,47 +2,56 @@ import GeneticAlg
 import csvwrite98
 import numpy as np
 import HillClimbing
+from tqdm import tqdm
+from matplotlib import pyplot as plt
 
-batch_size = 3
-board_size = 5
 max_run_times = [0.1, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20]
 
 
-def printResults(name, board_counts, board_attacks, cost_results):
-    board_attack_result = np.round(np.mean(board_attacks, axis=0), 3)
-    cost_result = np.round(np.mean(cost_results, axis=0), 3)
+# def create_graph(x_axis, genetics_costs, hillClimb_costs):
+#     print("Finished!")
+#     plt.plot(x_axis, genetics_costs, label="Genetics Algorithm")
+#     plt.plot(x_axis, hillClimb_costs, label="Hill Climbing")
+#     plt.xlabel('Run Time')
+#     plt.ylabel('Algorithm Cost')
+#     plt.title('Performance vs Run Time')
+#     plt.legend()
+#     plt.show()
+#
+#
+# print("---------------Test Results---------------\n")
+# # csvwrite98.create_board_csv(10, "board.txt", False) Create board when not given one...
+#
+# print("Testing HillClimber and Genetics for 2 minutes...")
+# HillClimbing.findSolution(120, False)
+# GeneticAlg.geneticAlg(120, False)
+# create_graph(range(1, 13), GeneticAlg.interval_cost_updates, HillClimbing.interval_cost_updates)
+#
+#
+# print("\nTesting Hill Climbing and Genetics for [0.1, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20] second intervals...")
+# genetics_costs = []
+# hillClimb_costs = []
+# for run_time in tqdm(max_run_times):
+#     hillClimb_attack, hillClimb_cost = HillClimbing.findSolution(run_time, False)
+#     hillClimb_costs.append(hillClimb_cost)
+#
+#     genetics_fitness, genetics_cost = GeneticAlg.geneticAlg(run_time, False)
+#     genetics_costs.append(genetics_cost)
+#
+# create_graph(max_run_times, genetics_costs, hillClimb_costs)
 
-    print("- " + name + " Board Attacks: " + str(board_attack_result))
-    print("- " + name + " Cost: " + str(cost_result))
 
+print("\nTesting largest board given 20 second Time Limit...")
+hillClimb_board_size = 10
+csvwrite98.create_board_csv(hillClimb_board_size, "board.txt", False)
+_, hillClimb_cost = HillClimbing.findSolution(20, False)
+print("Hill Climbing")
+print("- Board Size: " + str(hillClimb_board_size))
+print("- Cost: " + str(hillClimb_cost))
 
-print("---------------Test Results---------------")
-print("Batch Size: " + str(batch_size))
-print("Board Size: " + str(board_size) + "\n")
-
-for run_time in max_run_times:
-    print("Run-Time: " + str(run_time) + " sec.")
-
-    hillClimb_costs = []
-    hillClimb_attacks = []
-    hillClimb_board_counts = []
-
-    genetics_costs = []
-    genetics_fitnesses = []
-    for j in range(0, batch_size):
-        csvwrite98.create_board_csv(board_size, "board.txt", False)
-
-        hillClimb_attack, hillClimb_cost = HillClimbing.findSolution(run_time, board_size, False)
-        hillClimb_attacks.append(hillClimb_attack)
-        hillClimb_costs.append(hillClimb_cost)
-
-        genetics_fitness, genetics_cost = GeneticAlg.geneticAlg(run_time, board_size, False)
-        genetics_fitnesses.append(genetics_fitness)
-        genetics_costs.append(genetics_cost)
-
-    printResults("Hill Climbing", hillClimb_board_counts, hillClimb_attacks, hillClimb_costs)
-
-    genetics_fitness_result = np.round(np.mean(genetics_fitnesses, axis=0), 3)
-    genetics_cost_result = np.round(np.mean(genetics_costs, axis=0), 3)
-    print("- Genetics Fitness: " + str(genetics_fitness_result))
-    print("- Genetics Cost: " + str(genetics_cost_result) + "\n")
+genetics_board_size = 15
+csvwrite98.create_board_csv(genetics_board_size, "board.txt", False)
+_, genetics_cost = GeneticAlg.geneticAlg(20, False)
+print("Genetics Algorithm")
+print("- Board Size: " + str(genetics_board_size))
+print("- Cost: " + str(genetics_cost))

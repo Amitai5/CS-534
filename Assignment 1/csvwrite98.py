@@ -33,4 +33,4 @@ def create_board_csv(size, file_name, should_print):
     if should_print:
         print(arr)
 
-    np.savetxt("HeavyQBoards/" + file_name, arr, fmt='%i', delimiter=',')
+    np.savetxt(file_name, arr, fmt='%i', delimiter=',')

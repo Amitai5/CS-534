@@ -2,7 +2,7 @@ import csvwrite
 import numpy as np
 import SearchAlgorithms
 
-batch_size = 5
+batch_size = 3
 board_count = 9
 
 
@@ -29,6 +29,10 @@ for i in range(4, board_count + 1):
     modified_astar_time_batch = []
     modified_astar_cost_batch = []
     modified_astar_branching_batch = []
+
+    greedy_time_batch = []
+    greedy_cost_batch = []
+    greedy_branching_batch = []
     for j in range(0, batch_size):
         csvwrite.create_board_csv(i, "board.txt", False)
 
@@ -44,6 +48,12 @@ for i in range(4, board_count + 1):
         modified_astar_time_batch.append(modified_astar_elapsed_time)
         modified_astar_cost_batch.append(modified_astar_cost)
 
+        greedy_elapsed_time, greedy_cost, greedy_branching = SearchAlgorithms.findSolution(1, False)  # Greedy
+        greedy_branching_batch.append(greedy_branching)
+        greedy_time_batch.append(greedy_elapsed_time)
+        greedy_cost_batch.append(greedy_cost)
+
+    printResults("Greedy", greedy_time_batch, greedy_branching_batch, greedy_cost_batch)
     printResults("A*", astar_time_batch, astar_branching_batch, astar_cost_batch)
     printResults("Modified A*", modified_astar_time_batch, modified_astar_branching_batch, modified_astar_cost_batch)
     print("")

@@ -133,7 +133,7 @@ def findSolution(is_greedy, should_print):
     global w
 
     # load board
-    with open('HeavyQBoards/board.txt', newline='') as csvfile:
+    with open('board.txt', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         array = list(reader)
         size = len(array)
@@ -178,7 +178,7 @@ def findSolution(is_greedy, should_print):
                     print("Cost: " + str(solution[0]))
                 print("Time Elapsed: " + str(round(elapsed_time, 5)) + " sec.")
 
-            text_file = open("HeavyQBoards/ANSWER.txt", "w")
+            text_file = open("ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
             return elapsed_time, cost(array, solution[1]), (total_opened / total_added) * math.pow(size, 2)
