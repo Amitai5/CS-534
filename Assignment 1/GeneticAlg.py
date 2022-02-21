@@ -53,8 +53,6 @@ def geneticAlg(b):
     global best
     global k
 
-
-
     def makeBoardVector(b):
         for i in range(n):
             for j in range(n):

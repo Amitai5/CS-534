@@ -9,6 +9,7 @@ import numpy as np
 # create globals
 from csvwrite import create_board_csv
 
+use_modified_heuristic = False
 size = 0
 w = []
 
@@ -30,7 +31,10 @@ def heuristic(b):
                 hc = hc + w[i] + w[j]
             if d2[i] == d2[j]:
                 hc = hc + w[i] + w[j]
-    return hc * 4
+
+    if use_modified_heuristic:
+        return hc * math.sqrt(size)
+    return hc
 
 
 def cost(base, new):
@@ -129,7 +133,7 @@ def findSolution(is_greedy, should_print):
     global w
 
     # load board
-    with open('HeavyQBoards/test.csv', newline='') as csvfile:
+    with open('HeavyQBoards/board.txt', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         array = list(reader)
         size = len(array)
@@ -177,12 +181,12 @@ def findSolution(is_greedy, should_print):
             text_file = open("HeavyQBoards/ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
-            return elapsed_time, cost(array, solution[1]), (total_opened/total_added) * math.pow(size, 2)
+            return elapsed_time, cost(array, solution[1]), (total_opened / total_added) * math.pow(size, 2)
 
         openBoard = b[1]
         closed.add(b[0], [b[1]])
-        n2 = 0 #num succ adding
-        n = 0 #num solutions
+        n2 = 0  # num succ adding
+        n = 0  # num solutions
 
         # Generate successors
         for i in range(0, size):  # each column
@@ -199,7 +203,7 @@ def findSolution(is_greedy, should_print):
 
                 n = n + 1
                 sucString = getBoardString(successor)
-                if not sucString in closedList:  # Works now
+                if not sucString in closedList:
                     closedList.append(sucString)
                     n2 = n2 + 1
                     h = heuristic(successor)
