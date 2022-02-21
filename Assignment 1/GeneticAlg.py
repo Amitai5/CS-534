@@ -80,15 +80,18 @@ def geneticAlg(run_time, board_size, should_print):
 
         return numAttacks * 100
 
-    def cost(v):
+    def moveCost(v):
         c = 0
         for p in range(0, len(v)):
             c = c + abs(v[p][0] - array[p][0]) * (w[p] ** 2)
             c = c + abs(v[p][1] - array[p][1]) * (w[p] ** 2)
         return c
 
+    def cost(v):
+        return attacks(v) + moveCost(v)
+
     def fit(v):
-        return 0 - (attacks(v) + cost(v))
+        return 0 - (attacks(v) + moveCost(v))
 
     def generateSuccessors(v):
         global best
@@ -117,8 +120,8 @@ def geneticAlg(run_time, board_size, should_print):
         for i in range(int(math.sqrt(len(ss)))):
             elite.append(copy.deepcopy(ss[i]))
 
-        print(elite)
-        print(best)
+        #print(elite)
+        #print(best)
 
 
 
@@ -241,8 +244,8 @@ def geneticAlg(run_time, board_size, should_print):
             for j in range(0, size):
                 array[i][j] = int(array[i][j])
 
-        print(array)
-        print("Size ", size)
+        # print(array)
+        # print("Size ", size)
 
         for y in range(0, size):
             for x in range(0, size):
@@ -256,7 +259,7 @@ def geneticAlg(run_time, board_size, should_print):
     array = boardArrayXY
     nq = len(w)
     # starting heuristic cost (for fit calc)
-    shc = attacks(array) + cost(array)  # cost(array) should be 0
+    shc = attacks(array) + moveCost(array)  # cost(array) should be 0
     ss = []  # list of successors
     best = [array, fit(array)]
     ss.append(best)
@@ -272,7 +275,9 @@ def geneticAlg(run_time, board_size, should_print):
     print(best)
     print("Initial fit: ", fit(array))
     print("Final fit: ", best[1])
-    print("Final move cost: ", cost(best[0]))
+    print("Final move cost: ", moveCost(best[0]))
+    print("Final cost: ", cost(best[0]))
+    
     print(vToBoard(best[0]))
 
 
@@ -285,4 +290,4 @@ def geneticAlg(run_time, board_size, should_print):
     # swap columns without needing to return, ideally. TODO: check
 
 
-geneticAlg(0, 0, False)
+geneticAlg(20, 20, False)
