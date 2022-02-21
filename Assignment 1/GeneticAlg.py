@@ -222,16 +222,11 @@ def geneticAlg(run_time, board_size, should_print):
             scramble(s1, s2)
         #k = k - 1
 
-        if k <= 1: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
-            print("Finished")
-            print(best)
-            print("Initial fit: ", fit(array))
-            print("Final fit: ", best[1])
-            print("Final move cost: ", cost(best[0]))
-            print(vToBoard(best[0]))
-        else:
-            ss = ss + elite
-            recurs()
+        # if k <= 1: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
+        #
+        # else:
+        ss = ss + elite
+        recurs()
 
     with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
 
@@ -269,7 +264,16 @@ def geneticAlg(run_time, board_size, should_print):
     global startk
     startk = copy.deepcopy(k)
     generateSuccessors(array)
-    recurs()
+    start = time.time()
+    while time.time() - start < run_time:
+        recurs()
+
+    print("Finished")
+    print(best)
+    print("Initial fit: ", fit(array))
+    print("Final fit: ", best[1])
+    print("Final move cost: ", cost(best[0]))
+    print(vToBoard(best[0]))
 
 
 
