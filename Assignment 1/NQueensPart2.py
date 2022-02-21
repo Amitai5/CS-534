@@ -8,11 +8,11 @@ from matplotlib import pyplot as plt
 max_run_times = [0.1, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20]
 
 
-def create_graph(x_axis, genetics_costs, hillClimb_costs):
+def create_graph(x_axis, x_label, genetics_costs, hillClimb_costs):
     print("Finished!")
     plt.plot(x_axis, genetics_costs, label="Genetics Algorithm")
     plt.plot(x_axis, hillClimb_costs, label="Hill Climbing")
-    plt.xlabel('Run Time')
+    plt.xlabel(x_label)
     plt.ylabel('Algorithm Cost')
     plt.title('Performance vs Run Time')
     plt.legend()
@@ -20,12 +20,12 @@ def create_graph(x_axis, genetics_costs, hillClimb_costs):
 
 
 print("---------------Test Results---------------\n")
-# csvwrite98.create_board_csv(10, "board.txt", False) Create board when not given one...
+# csvwrite98.create_board_csv(8, "board.txt", False)  # Create board when not given one...
 
 print("Testing HillClimber and Genetics for 2 minutes...")
 HillClimbing.findSolution(120, False)
 GeneticAlg.geneticAlg(120, False)
-create_graph(range(1, 13), GeneticAlg.interval_cost_updates, HillClimbing.interval_cost_updates)
+create_graph(range(1, 13), "Run Time (10 second intervals)", GeneticAlg.interval_cost_updates, HillClimbing.interval_cost_updates)
 
 
 print("\nTesting Hill Climbing and Genetics for [0.1, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20] second intervals...")
@@ -38,7 +38,7 @@ for run_time in tqdm(max_run_times):
     genetics_fitness, genetics_cost = GeneticAlg.geneticAlg(run_time, False)
     genetics_costs.append(genetics_cost)
 
-create_graph(max_run_times, genetics_costs, hillClimb_costs)
+create_graph(max_run_times, "Run Time (seconds)", genetics_costs, hillClimb_costs)
 
 
 print("\nTesting largest board given 20 second Time Limit...")

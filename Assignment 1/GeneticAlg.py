@@ -220,6 +220,7 @@ def geneticAlg(run_time, should_print):
         else:
             return False
 
+
     def recurs():
         global k
         global ss
@@ -270,7 +271,7 @@ def geneticAlg(run_time, should_print):
         if int(time.time() - start) % 10 == 0 and not has_hit:
             interval_cost_updates.append(cost(best[0]))
             has_hit = True
-        if int(time.time() - start) % 10 == 1 and has_hit:
+        elif int(time.time() - start) % 10 != 0 and has_hit:
             has_hit = False
         recurs()
 
