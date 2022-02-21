@@ -227,7 +227,6 @@ def geneticAlg(b):
 
         setElite()
         cull()
-        ss = ss + elite
         for i in range(k):
             #print("ss: ", ss)
             s1, s2 = random.choices(ss, k=2)
