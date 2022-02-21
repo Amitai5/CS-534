@@ -15,9 +15,10 @@ n = 0
 best = []
 elite = []
 ss = []
+k = 0
 
 with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
-    global n
+
     reader = csv.reader(csvfile, delimiter=',')
 
     array = list(reader)
@@ -35,7 +36,7 @@ with open('HeavyQBoards/Test98.csv', newline='') as csvfile:
     for y in range(0,size):
         for x in range(0, size):
             if array[x][y]!=0:
-                boardArrayXY.append((x,y))
+                boardArrayXY.append([x, y])
                 w.append(array[x][y])
 print(boardArrayXY)
 print(w)
@@ -49,10 +50,10 @@ def geneticAlg(b):
     global n
     global ss
     global elite
+    global best
+    global k
 
-    #n = len(b)
-    array = b
-    nq = len(w)
+
 
     def makeBoardVector(b):
         for i in range(n):
@@ -64,13 +65,14 @@ def geneticAlg(b):
     #makeBoardVector(b)
 
     def generateSuccessor(v):
+        s = copy.deepcopy(v)
         for x in range(int(math.sqrt(nq))): #generate sqrt(#of queen) queens to try and move
             q = random.randint(0, nq - 1)  # queen to move
             ni = random.randint(0, n - 1)  # new row position
-            newCoord = (v[q][0], ni)
-            if not (newCoord in v):
-                v[q] = newCoord
-        return v
+            newCoord = [ni, s[q][1]]
+            if not (newCoord in s):
+                s[q] = newCoord
+        return s
 
 
 
@@ -97,43 +99,50 @@ def geneticAlg(b):
 
         return numAttacks * 100
 
-    def cost(b1):
+    def cost(v):
         c = 0
-        for p in range(0, len(b1)):
-            c += abs(b1[p][0] - array[p][0]) * (w[p] ** 2)
-            c += abs(b1[p][1] - array[p][1]) * (w[p] ** 2)
+        for p in range(0, len(v)):
+            c = c + abs(v[p][0] - array[p][0]) * (w[p] ** 2)
+            c = c + abs(v[p][1] - array[p][1]) * (w[p] ** 2)
         return c
 
-    #starting heuristic cost (for fit calc)
-    shc = attacks(array) + cost(array) #cost(array) should be 0
-
-
     def fit(v):
-        return shc - (attacks(v) + cost(v))
+        return 0 - (attacks(v) + cost(v))
 
-
-    ss = []  # list of successors
-    best = fit(array)
-    k = 10  # num successors
     def generateSuccessors(v):
+        global best
         for i in range(k):  # generate initial successors
             s = generateSuccessor(v) #successor to add
             sf = fit(s) #fit of current successor
-            s = (s, sf)
-            if not s in ss:
+            s = [s, sf]
+            if s not in ss:
                 if sf > best[1]:
                     best = s
                 ss.append(s)
 
-    def elite(): #keep the strongest pop
+    def setElite(): #keep the strongest org
+        global best
+        global elite
         elite = []
-        ss.sort(key=lambda x: x[1])
-        for i in range(int(sqrt(len(ss)))):
+        sortFit(ss)
+        for i in range(int(math.sqrt(len(ss)))):
             elite.append(copy.deepcopy(ss[i]))
+        if elite[0][1] > best[1]:
+            best = elite[0]
+
 
     def cull(): #remove the weakest pop
         for i in range(int(len(ss) / 2)):
-            ss.remove(-i)
+            ss.pop(-i)
+
+    def checkElite(s):
+        s[1] = fit(s[0])
+        print("elite: ", elite)
+        if s[1] > elite[-1][1]:
+            elite.insert(0, copy.deepcopy(s))
+
+    def sortFit(arr):
+        ss.sort(key=lambda x: x[1])
 
     def scramble(s1, s2):
         random.randint(0, 100)
@@ -144,8 +153,12 @@ def geneticAlg(b):
             if(r <= p1):
                 swapColumn(s1[0], s2[0], i)
             elif r >= p2:
-                mutateCol(s1, col)
-                mutateCol(s2, col)
+                mutateCol(s1[0], i)
+                mutateCol(s2[0], i)
+            checkElite(s1)
+            checkElite(s2)
+        s1[1] = fit(s1)
+        s2[1] = fit(s2)
 
         return s1, s2
 
@@ -153,17 +166,59 @@ def geneticAlg(b):
         vs = v[:][col]
         for i in vs:
             ni = random.randint(0, n - 1)  # new row position
-            newCoord = (v[q][0], ni)
+            print("v: ", v)
+            print("vs: ", vs)
+            print("i: ", i)
+            newCoord = [ni, i[1]]
             if not (newCoord in v):
                 i = newCoord
 
+    def vToBoard(v):
 
+        string = ""
+        for i in range(n):
+            for j in range(n):
+                if (i, j) in v:
+                    string = string + " " + str(w[v.index((i, j))]) + " "
+                else:
+                    string = string + " 0 "
+                if j == n - 1:
+                    string = string + "\n"
+        return string
 
-    def recurs(v):
-        generateSuccessors(v)
-        elite()
+    def recurs():
+        global k
+
+        setElite()
         cull()
-        for i in range (len(ss)):
+        for i in range(k):
+            print("ss: ", ss)
+            s1, s2 = random.choices(ss, k=2)
+            scramble(s1, s2)
+        k = k - 1
+
+        if k == 0 or (cost[best[0]] < 400 and k < sqrt(n)):
+            print("Finished")
+            print("Final fit: ", best[1])
+            print("Final cost: ", cost(best[0]))
+            print(vToBoard(best[0]))
+        else:
+            ss.append(elite)
+            recurs()
+    # n = len(b)
+    array = b
+    nq = len(w)
+    # starting heuristic cost (for fit calc)
+    shc = attacks(array) + cost(array)  # cost(array) should be 0
+    ss = []  # list of successors
+    best = [array, fit(array)]
+    ss.append(best)
+    k = n ** 2  # num successors
+    generateSuccessors(array)
+    recurs()
+
+
+
 
 
 
