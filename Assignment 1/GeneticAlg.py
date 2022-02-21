@@ -120,7 +120,8 @@ def geneticAlg(b):
             s = [s, sf]
             if s not in ss:
                 if sf > best[1]:
-                    best = s
+                    print("initial new best found: ", sf)
+                    best = copy.deepcopy(s)
                 ss.append(s)
 
     def setElite(): #keep the strongest org
@@ -136,11 +137,13 @@ def geneticAlg(b):
             elite.append(copy.deepcopy(ss[i]))
         if elite[0][1] > best[1]:
             best = copy.deepcopy(elite[0])
+            print("New best fit: ", best[1])
 
 
     def cull(): #remove the weakest pop
-        for i in range(int(len(ss) / 2)):
-            ss.pop(-i)
+        for i in range(int(len(ss) / k)):
+            if len(ss) != 0:
+                ss.pop(-1)
 
     def checkElite(s):
         s[1] = fit(s[0])
@@ -211,7 +214,9 @@ def geneticAlg(b):
         for i in range(len(elite)):
             m = m + elite[i][1]
         m = m / len(elite)
-        if m == best[1]:
+        if (m - best[1]) / best[1] < .1:
+            print("I think we real close")
+            print(best[1])
             return True
         else:
             return False
@@ -222,13 +227,14 @@ def geneticAlg(b):
 
         setElite()
         cull()
+        ss = ss + elite
         for i in range(k):
             #print("ss: ", ss)
             s1, s2 = random.choices(ss, k=2)
             scramble(s1, s2)
         k = k - 1
 
-        if k == 0 or (checkRealClose() and k < math.sqrt(n)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
+        if k == 0: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
             print("Finished")
             print(best)
             print("Initial fit: ", fit(array))
@@ -247,7 +253,9 @@ def geneticAlg(b):
     ss = []  # list of successors
     best = [array, fit(array)]
     ss.append(best)
-    k = (n ** 2) * 4  # num successors
+    k = (n ** 2)  # num successors
+    global startk
+    startk = copy.deepcopy(k)
     generateSuccessors(array)
     recurs()
 
