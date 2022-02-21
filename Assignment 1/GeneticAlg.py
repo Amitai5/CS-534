@@ -141,6 +141,7 @@ def geneticAlg(b):
     def cull(): #remove the weakest pop
         for i in range(int(len(ss) / k)):
             if len(ss) != 0:
+                print("pop")
                 ss.pop(-1)
 
     def checkElite(s):
@@ -171,7 +172,7 @@ def geneticAlg(b):
         random.randint(0, 100)
         p1 = s1[1] / (s1[1] + s2[1])
         p2 = s2[1] / (s1[1] + s2[1])
-        for i in range(n):
+        for i in random.shuffle(range(n)):
             r = random.randint(0, 100)
             if(r <= p1):
                 swapColumn(s1[0], s2[0], i)
@@ -231,12 +232,12 @@ def geneticAlg(b):
             scramble(s1, s2)
         k = k - 1
 
-        if k == 0: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
+        if k <= 1: # or (checkRealClose() and k < math.sqrt(startk)): #or (numAttacks(best[0]) < 400 and k < math.sqrt(n))
             print("Finished")
             print(best)
             print("Initial fit: ", fit(array))
             print("Final fit: ", best[1])
-            print("Final cost: ", cost(best[0]))
+            print("Final move cost: ", cost(best[0]))
             print(vToBoard(best[0]))
         else:
             ss = ss + elite
