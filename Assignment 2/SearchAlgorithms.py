@@ -6,9 +6,6 @@ import copy
 import heapq
 import numpy as np
 
-# create globals
-from csvwrite import create_board_csv
-
 use_modified_heuristic = False
 size = 0
 w = []
@@ -124,7 +121,7 @@ class queueTools:
         return len(self.h)
 
 
-def findSolution(is_greedy, should_print):
+def findSolution(array, is_greedy, should_print):
     start_time = time.time()
     total_opened = 0
     total_added = 0
@@ -132,15 +129,13 @@ def findSolution(is_greedy, should_print):
     global w
 
     # load board
-    with open('board.txt', newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        array = list(reader)
-        size = len(array)
 
-        for i in range(0, size):
-            for j in range(0, size):
-                array[i][j] = int(array[i][j])
-        w = weightVector(array)
+    # load board
+    size = len(array)
+    for i in range(0, size):
+        for j in range(0, size):
+            array[i][j] = int(array[i][j])
+    w = weightVector(array)
 
     array = moveVector(array)
     frontier = queueTools()
