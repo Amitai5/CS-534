@@ -6,7 +6,7 @@ import tqdm
 import os
 
 board_size = 6
-gen_data_count = 5
+gen_data_count = 500
 training_data_directory = os.getcwd() + "\\trainingData"
 
 largest_file_number = 0
@@ -17,6 +17,7 @@ for name in os.listdir(training_data_directory):
 file_name = training_data_directory + "\\training_data_" + str(largest_file_number + 1) + ".pkl"
 
 print("\nBoard Size: " + str(board_size))
+print("Generation Size: " + str(gen_data_count))
 print("File Name: " + file_name)
 print("\nGenerating " + str(gen_data_count) + " Boards...")
 
