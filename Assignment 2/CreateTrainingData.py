@@ -6,7 +6,7 @@ import tqdm
 import os
 
 board_size = 6
-gen_data_count = 500
+gen_data_count = 200
 training_data_directory = os.getcwd() + "\\trainingData"
 
 largest_file_number = 0
