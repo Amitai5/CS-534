@@ -5,32 +5,52 @@ import math
 import copy
 import heapq
 import numpy as np
+import statistics
 
 use_modified_heuristic = False
 size = 0
 w = []
 
 
+#Use the neural network here
 def heuristic(b):
-    global size
-    global w
+    global size #size of board MUST BE 6 as is it is written now
+    global w #weights of queens
+    features = []
+    #I pull the features from the boards here - you can use these for the NN
+    # Create features, first 12 are row of queen in column, weight of queen in row
+    totalWeight = 0
+    totalAttackWeight = 0
+    numAttQueens = 0
+    rowPos = []
+    heaviestAttacking = 0
 
-    # w = weightVector(b) #weight vector
-    d1 = diag1Vector(b)  # diag1 vector
-    d2 = diag2Vector(b)  # diag2 vector
-    hc = 0
+    #add each position to features (1st 12) - 1D board here
+    for i in range(len(b)):
+        features.append(b[i])
+        features.append(w[i])
+        totalWeight += w[i]
 
-    for i in range(size):
-        for j in range(i + 1, size):
-            if b[i] == b[j]:
-                hc +=1;
-            if d1[i] == d1[j]:
-                hc +=1;
-            if d2[i] == d2[j]:
-                hc +=1;
-    if use_modified_heuristic:
-        return hc * math.sqrt(size)
-    return hc
+    for i in range(len(b)):
+        myRow = b[i]
+        # check for attacks
+        for j in range(i + 1, 6):
+            if rowPos[j] == myRow or rowPos[j] == myRow + (j - i) or rowPos[j] == myRow - (j - i):
+                numAttQueens += 1
+                heaviestAttacking = max(heaviestAttacking, w[i], w[j])
+                totalAttackWeight += w[i] + w[j]
+
+    # Add last 5 derived features
+    features.append(totalAttackWeight / totalWeight)
+    features.append(numAttQueens)
+    features.append(statistics.stdev(rowPos))
+    features.append(heaviestAttacking)
+    features.append(totalWeight)
+
+    #calculate heuristic from features
+    #TODO add NN here
+
+    return 1#NN output
 
 
 def cost(base, new):
@@ -127,8 +147,6 @@ def findSolution(array, is_greedy, should_print):
     total_added = 0
     global size
     global w
-
-    # load board
 
     # load board
     size = len(array)
