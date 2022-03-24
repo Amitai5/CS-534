@@ -39,7 +39,7 @@ def heuristic(use_nn, b):
     for i in range(len(b)):
         myRow = b[i]
         # check for attacks
-        for j in range(i + 1, 6):
+        for j in range(i + 1, size):
             if b[j] == myRow or b[j] == myRow + (j - i) or b[j] == myRow - (j - i):
                 numAttQueens += 1
                 heaviestAttacking = max(heaviestAttacking, w[i], w[j])
