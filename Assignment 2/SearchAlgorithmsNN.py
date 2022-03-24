@@ -5,12 +5,14 @@ import time
 import math
 import copy
 import heapq
+import torch
 import pandas
 import numpy as np
 import statistics
 
-# model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
-# neural_network = pandas.read_pickle(model_file)
+model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
+neural_network = pandas.read_pickle(model_file)
+neural_network.to("cpu")
 size = 0
 w = []
 
@@ -51,8 +53,10 @@ def heuristic(use_nn, b):
     features.append(statistics.stdev(b))
     features.append(heaviestAttacking)
     features.append(totalWeight)
-    # return neural_network.forward(features)
-    return 1
+
+    sanitized_features = torch.Tensor(features)
+    result = neural_network.forward(sanitized_features).detach().numpy()
+    return np.round(result[0])
 
 
 def cost(base, new):
@@ -222,6 +226,8 @@ def findSolution(array, use_nn, should_print):
                     closedList.append(sucString)
                     n2 = n2 + 1
                     h = heuristic(use_nn, successor)
+                    if should_print:
+                        print("Heuristic: ", h)
                     c = 0
                     if is_greedy != 1:
                         c = cost(array, successor)
@@ -232,7 +238,6 @@ def findSolution(array, use_nn, should_print):
                             solution = (c, successor)
                     else:
                         frontier.add(c + h, successor)
-        if should_print:
-            print("Successors " + str(n) + " added " + str(n2) + " new nodes")
+            # print("Successors " + str(n) + " added " + str(n2) + " new nodes")
         # If solved exit
         # break

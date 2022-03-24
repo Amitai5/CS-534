@@ -1,6 +1,7 @@
 import SearchAlgorithmsNN
 import BoardWrite as bw
 import numpy as np
+import tqdm
 
 astar_time_batch = []
 astar_cost_batch = []
@@ -26,25 +27,24 @@ def printResults(name, time_results, branching_results, cost_results):
 
 
 def run_both_algos(test_board):
-    nn_astar_elapsed_time, nn_astar_cost, nn_astar_branching = SearchAlgorithmsNN.findSolution(test_board, True, False)
+    nn_astar_elapsed_time, nn_astar_cost, nn_astar_branching = SearchAlgorithmsNN.findSolution(test_board, True, True)
     nn_astar_branching_batch.append(nn_astar_branching)
     nn_astar_time_batch.append(nn_astar_elapsed_time)
     nn_astar_cost_batch.append(nn_astar_cost)
 
-    astar_elapsed_time, astar_cost, astar_branching = SearchAlgorithmsNN.findSolution(test_board, False, False)
+    astar_elapsed_time, astar_cost, astar_branching = SearchAlgorithmsNN.findSolution(test_board, False, True)
     astar_branching_batch.append(astar_branching)
     astar_time_batch.append(astar_elapsed_time)
     astar_cost_batch.append(astar_cost)
 
 
 print("---------------Test Results---------------")
+print("Board Size: " + str(board_size))
 print("Batch Size: " + str(batch_size) + "\n")
 
-for i in range(4, board_count + 1):
-    print("Board Size: " + str(i))
-    for j in range(0, batch_size):
-        board = bw.create_board(6, False)
-        run_both_algos(board)
+for i in range(0, batch_size):
+    board = bw.create_board(6, False)
+    run_both_algos(board)
 
 printResults("A* (Neural Network)", nn_astar_time_batch, nn_astar_branching_batch, nn_astar_cost_batch)
 printResults("A*", astar_time_batch, astar_branching_batch, astar_cost_batch)
