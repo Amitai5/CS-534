@@ -1,23 +1,29 @@
+import os
 import csv
 import sys
 import time
 import math
 import copy
 import heapq
+import pandas
 import numpy as np
 import statistics
 
-use_modified_heuristic = False
+model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
+neural_network = pandas.read_pickle(model_file)
 size = 0
 w = []
 
 
-#Use the neural network here
-def heuristic(b):
-    global size #size of board MUST BE 6 as is it is written now
-    global w #weights of queens
+# Use the neural network here
+def heuristic(use_nn, b):
+    if use_nn is not True:
+        return 1
+
+    global size  # size of board MUST BE 6 as is it is written now
+    global w  # weights of queens
     features = []
-    #I pull the features from the boards here - you can use these for the NN
+    # I pull the features from the boards here - you can use these for the NN
     # Create features, first 12 are row of queen in column, weight of queen in row
     totalWeight = 0
     totalAttackWeight = 0
@@ -25,7 +31,7 @@ def heuristic(b):
     rowPos = []
     heaviestAttacking = 0
 
-    #add each position to features (1st 12) - 1D board here
+    # add each position to features list (1st 12) - 1D board here
     for i in range(len(b)):
         features.append(b[i])
         features.append(w[i])
@@ -46,11 +52,7 @@ def heuristic(b):
     features.append(statistics.stdev(rowPos))
     features.append(heaviestAttacking)
     features.append(totalWeight)
-
-    #calculate heuristic from features
-    #TODO add NN here
-
-    return 1#NN output
+    return neural_network.forward(features)
 
 
 def cost(base, new):
@@ -141,8 +143,9 @@ class queueTools:
         return len(self.h)
 
 
-def findSolution(array, is_greedy, should_print):
+def findSolution(array, use_nn, should_print):
     start_time = time.time()
+    is_greedy = False
     total_opened = 0
     total_added = 0
     global size
@@ -162,7 +165,7 @@ def findSolution(array, is_greedy, should_print):
     closedList = []
 
     # add 1st node
-    est_cost = 0 + heuristic(array)
+    est_cost = 0 + heuristic(use_nn, array)
     frontier.add(est_cost, array)
     closedList.append(getBoardString(array))
 
@@ -218,7 +221,7 @@ def findSolution(array, is_greedy, should_print):
                 if not sucString in closedList:
                     closedList.append(sucString)
                     n2 = n2 + 1
-                    h = heuristic(successor)
+                    h = heuristic(use_nn, successor)
                     c = 0
                     if is_greedy != 1:
                         c = cost(array, successor)

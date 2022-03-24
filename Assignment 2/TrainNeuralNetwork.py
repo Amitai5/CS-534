@@ -12,7 +12,7 @@ import os
 
 
 EPOCHS = 10
-BATCH_SIZE = 5
+BATCH_SIZE = 10
 neural_network_directory = os.getcwd() + "\\models"
 
 largest_file_number = 0
