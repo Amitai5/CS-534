@@ -28,7 +28,6 @@ def heuristic(use_nn, b):
     totalWeight = 0
     totalAttackWeight = 0
     numAttQueens = 0
-    rowPos = []
     heaviestAttacking = 0
 
     # add each position to features list (1st 12) - 1D board here
@@ -41,7 +40,7 @@ def heuristic(use_nn, b):
         myRow = b[i]
         # check for attacks
         for j in range(i + 1, 6):
-            if rowPos[j] == myRow or rowPos[j] == myRow + (j - i) or rowPos[j] == myRow - (j - i):
+            if b[j] == myRow or b[j] == myRow + (j - i) or b[j] == myRow - (j - i):
                 numAttQueens += 1
                 heaviestAttacking = max(heaviestAttacking, w[i], w[j])
                 totalAttackWeight += w[i] + w[j]
@@ -49,7 +48,7 @@ def heuristic(use_nn, b):
     # Add last 5 derived features
     features.append(totalAttackWeight / totalWeight)
     features.append(numAttQueens)
-    features.append(statistics.stdev(rowPos))
+    features.append(statistics.stdev(b))
     features.append(heaviestAttacking)
     features.append(totalWeight)
     # return neural_network.forward(features)
