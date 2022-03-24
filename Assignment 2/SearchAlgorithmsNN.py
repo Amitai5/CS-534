@@ -9,8 +9,8 @@ import pandas
 import numpy as np
 import statistics
 
-model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
-neural_network = pandas.read_pickle(model_file)
+# model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
+# neural_network = pandas.read_pickle(model_file)
 size = 0
 w = []
 
@@ -52,7 +52,8 @@ def heuristic(use_nn, b):
     features.append(statistics.stdev(rowPos))
     features.append(heaviestAttacking)
     features.append(totalWeight)
-    return neural_network.forward(features)
+    # return neural_network.forward(features)
+    return 1
 
 
 def cost(base, new):
