@@ -4,6 +4,7 @@ import os
 
 
 def sanitize_data():
+    largest_cost = 0
     training_data = []
     training_data_directory = os.getcwd() + "\\trainingData"
     for name in os.listdir(training_data_directory):
@@ -23,7 +24,7 @@ def sanitize_data():
             for i in range(len(board)):
                 for j in range(len(board)):
                     if board[j][i] != 0:
-                        features.append(j)
+                        features.append(j / len(board))
                         features.append(board[j][i])
                         totalWeight += board[j][i]
                         rowPos.append(j)
@@ -44,6 +45,13 @@ def sanitize_data():
             features.append(heaviestAttacking)
             features.append(totalWeight)
 
+            if astar_cost > largest_cost:
+                largest_cost = astar_cost
+
             sanitized_data = [features, astar_cost]
             training_data.append(sanitized_data)
-    return training_data
+
+    # for i in range(len(training_data)):
+    #    training_data[i][1] = round(training_data[i][1] / largest_cost, 3)
+
+    return training_data, largest_cost

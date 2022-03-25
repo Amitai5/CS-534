@@ -56,7 +56,7 @@ def heuristic(use_nn, b):
 
     sanitized_features = torch.Tensor(features)
     result = neural_network.forward(sanitized_features).detach().numpy()
-    return np.round(result[0])
+    return np.floor(result[0])
 
 
 def cost(base, new):

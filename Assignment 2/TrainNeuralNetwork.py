@@ -11,8 +11,8 @@ import tqdm
 import os
 
 
-EPOCHS = 10
-BATCH_SIZE = 10
+EPOCHS = 150
+BATCH_SIZE = 30
 neural_network_directory = os.getcwd() + "\\models"
 
 largest_file_number = 0
@@ -32,7 +32,7 @@ else:
 
 # Get sanitized training data
 print("Sanitizing Data...")
-training_data = sd.sanitize_data()
+training_data, largest_cost = sd.sanitize_data()
 print("Training Data Count: ", len(training_data))
 print("Neural Network Input Count: ", len(training_data[0][0]))
 print("")
