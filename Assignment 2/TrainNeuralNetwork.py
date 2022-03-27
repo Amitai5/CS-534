@@ -11,7 +11,7 @@ import tqdm
 import os
 
 
-EPOCHS = 300
+EPOCHS = 500
 BATCH_SIZE = 30
 neural_network_directory = os.getcwd() + "\\models"
 

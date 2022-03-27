@@ -12,10 +12,10 @@ margin_of_error = 10/712
 
 class NetTrainer:
     def __init__(self, model, device, training_data):
-        self.optimizer = optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.01)
+        self.optimizer = optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.05)
         self.loss_function = nn.L1Loss()
 
-        x = torch.Tensor([i[0] for i in training_data]).view(-1, 41)
+        x = torch.Tensor([i[0] for i in training_data]).view(-1, 5)
         y = torch.Tensor([i[1] for i in training_data]).view(-1, 1)
 
         # Reserve 10% of our data for validation
@@ -60,7 +60,7 @@ class NetTrainer:
         random_start = np.random.randint(len(self.test_x) - self.testSize)
         x, y = self.test_x[random_start:random_start + self.testSize], self.test_y[random_start:random_start + self.testSize]
         with torch.no_grad():
-            acc, loss = self.fwd_pass(x.view(-1, 41), y.view(-1, 1))
+            acc, loss = self.fwd_pass(x.view(-1, 5), y.view(-1, 1))
         return acc, loss
 
     def train(self, batch_size=100, epochs=4):
@@ -72,7 +72,7 @@ class NetTrainer:
 
             for epoch in range(epochs):
                 for i in tqdm(range(0, len(self.train_x), batch_size), file=sys.stdout):
-                    batch_x = self.train_x[i:i + batch_size].view(-1, 41).to(self.device)
+                    batch_x = self.train_x[i:i + batch_size].view(-1, 5).to(self.device)
                     batch_y = self.train_y[i:i + batch_size].view(-1, 1).to(self.device)
 
                     acc, loss = self.fwd_pass(batch_x, batch_y, train=True)

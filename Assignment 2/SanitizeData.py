@@ -26,7 +26,7 @@ def sanitize_data():
                     if board[j][i] != 0:
                         rowPos.append(j)
 
-                    features.append(board[j][i]/9)
+                    # features.append(board[j][i]/9)
                     totalWeight += board[j][i]
 
             for i in range(len(board)):

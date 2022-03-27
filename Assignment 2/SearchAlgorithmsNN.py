@@ -33,7 +33,7 @@ def heuristic(b):
     board = mvTo2DBoard(b)
     for i in range(len(board)):
         for j in range(len(board)):
-            features.append(board[j][i]/9)
+            # features.append(board[j][i]/9)
             totalWeight += board[j][i]
 
     rowPos = b

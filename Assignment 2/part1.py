@@ -21,6 +21,11 @@ board_size = 6
 board_count = 12
 
 
+print("\nTesting Parameters:")
+print("Board Size: " + str(board_size))
+print("Batch Size: " + str(batch_size) + "\n")
+
+
 def printResults(name, time_results, heuristic_times, cost_results):
     heuristic_time = np.round(np.mean(heuristic_times, axis=0) / 1000, 3)
     time_result = np.round(np.mean(time_results, axis=0), 3)
@@ -48,17 +53,15 @@ def run_algos(test_board):
     astar_cost_batch.append(astar_cost)
 
 
-print("\nTraining Parameters:")
-print("Board Size: " + str(board_size))
-print("Batch Size: " + str(batch_size) + "\n")
-
-print("Training...")
+print("Testing...")
 for i in tqdm.tqdm(range(0, batch_size)):
     board = bw.create_board(6, False)
     run_algos(board)
 
 print("\n---------------Test Results---------------")
 printResults("A* (Neural Network)", nn_astar_time_batch, nn_astar_heuristic_times_batch, nn_astar_cost_batch)
+print("")
 printResults("A* (Modified)", m_astar_time_batch, m_astar_heuristic_times_batch, m_astar_cost_batch)
+print("")
 printResults("A*", astar_time_batch, astar_heuristic_times_batch, astar_cost_batch)
 print("")

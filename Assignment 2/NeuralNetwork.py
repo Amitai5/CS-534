@@ -8,7 +8,7 @@ import torch
 class NetModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.layer1 = nn.Linear(41, 1)
+        self.layer1 = nn.Linear(5, 1)
         # self.layer2 = nn.Linear(20, 1)
         # self.layer3 = nn.Linear(8, 1)
 
