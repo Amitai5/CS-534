@@ -8,18 +8,19 @@ import torch
 class NetModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.layer1 = nn.Linear(17, 17)
-        self.layer2 = nn.Linear(17, 8)
-        self.layer3 = nn.Linear(8, 1)
+        self.layer1 = nn.Linear(17, 1)
+        # self.layer2 = nn.Linear(17, 8)
+        # self.layer3 = nn.Linear(8, 1)
 
         self.activ1 = nn.ReLU()
-        self.activ2 = nn.ReLU()
+        # self.activ2 = nn.ReLU()
         self.activ3 = nn.ReLU()
 
     def forward(self, inputs):
         inputs = self.layer1(inputs)
         inputs = self.activ1(inputs)
-        inputs = self.layer2(inputs)
-        inputs = self.activ2(inputs)
-        inputs = self.layer3(inputs)
-        return self.activ3(inputs)
+        # inputs = self.layer2(inputs)
+        # inputs = self.activ2(inputs)
+        # inputs = self.layer3(inputs)
+        # inputs = self.activ3(inputs)
+        return inputs
