@@ -18,10 +18,7 @@ w = []
 
 
 # Use the neural network here
-def heuristic(use_nn, b):
-    if use_nn is not True:
-        return 1
-
+def heuristic(b):
     global size  # size of board MUST BE 6 as is it is written now
     global w  # weights of queens
     features = []
@@ -32,20 +29,22 @@ def heuristic(use_nn, b):
     numAttQueens = 0
     heaviestAttacking = 0
 
-    # add each position to features list (1st 12) - 1D board here
-    for i in range(len(b)):
-        features.append(b[i])
-        features.append(w[i])
-        totalWeight += w[i]
+    # add each position to feature list (1st 12) - 1D board here
+    board = mvTo2DBoard(b)
+    for i in range(len(board)):
+        for j in range(len(board)):
+            features.append(board[j][i]/9)
+            totalWeight += board[j][i]
 
-    for i in range(len(b)):
-        myRow = b[i]
+    rowPos = b
+    for i in range(len(board)):
+        myRow = rowPos[i]
         # check for attacks
-        for j in range(i + 1, size):
-            if b[j] == myRow or b[j] == myRow + (j - i) or b[j] == myRow - (j - i):
+        for j in range(i + 1, 6):
+            if rowPos[j] == myRow or rowPos[j] == myRow + (j - i) or rowPos[j] == myRow - (j - i):
                 numAttQueens += 1
-                heaviestAttacking = max(heaviestAttacking, w[i], w[j])
-                totalAttackWeight += w[i] + w[j]
+                heaviestAttacking = max(heaviestAttacking, board[myRow][i], board[rowPos[j]][j])
+                totalAttackWeight += board[myRow][i] + board[rowPos[j]][j]
 
     # Add last 5 derived features
     features.append(totalAttackWeight / totalWeight)
@@ -55,8 +54,30 @@ def heuristic(use_nn, b):
     features.append(totalWeight)
 
     sanitized_features = torch.Tensor(features)
-    result = neural_network.forward(sanitized_features).detach().numpy()
-    return np.floor(result[0])
+
+    with torch.no_grad():
+        result = neural_network.forward(sanitized_features).detach().numpy()
+    return round(result[0] * 712) * (numAttQueens != 0)
+
+
+def heuristic2(b):
+    global size
+    global w
+
+    # w = weightVector(b) #weight vector
+    d1 = diag1Vector(b)  # diag1 vector
+    d2 = diag2Vector(b)  # diag2 vector
+    hc = 0
+
+    for i in range(size):
+        for j in range(i + 1, size):
+            if b[i] == b[j]:
+                hc +=1;
+            if d1[i] == d1[j]:
+                hc +=1;
+            if d2[i] == d2[j]:
+                hc +=1;
+    return hc
 
 
 def cost(base, new):
@@ -132,6 +153,18 @@ def mvToBoard(mv):
     return string
 
 
+def mvTo2DBoard(mv):
+    global size
+    global w
+
+    counter = 0
+    board = np.zeros((6, 6), dtype=float)
+    for i in mv:
+        board[i][counter] = w[counter]
+        counter += 1
+    return board
+
+
 # Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
 class queueTools:
     def __init__(self):
@@ -149,6 +182,7 @@ class queueTools:
 
 def findSolution(array, use_nn, should_print):
     start_time = time.time()
+    heuristic_times = []
     is_greedy = False
     total_opened = 0
     total_added = 0
@@ -169,7 +203,7 @@ def findSolution(array, use_nn, should_print):
     closedList = []
 
     # add 1st node
-    est_cost = 0 + heuristic(use_nn, array)
+    est_cost = 0 + heuristic(array)
     frontier.add(est_cost, array)
     closedList.append(getBoardString(array))
 
@@ -200,7 +234,7 @@ def findSolution(array, use_nn, should_print):
             text_file = open("ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
-            return elapsed_time, cost(array, solution[1]), (total_opened / total_added) * math.pow(size, 2)
+            return elapsed_time, cost(array, solution[1]), heuristic_times
 
         openBoard = b[1]
         closed.add(b[0], [b[1]])
@@ -225,9 +259,17 @@ def findSolution(array, use_nn, should_print):
                 if not sucString in closedList:
                     closedList.append(sucString)
                     n2 = n2 + 1
-                    h = heuristic(use_nn, successor)
+                    h_start_time = time.time_ns()
+                    if use_nn:
+                        h = heuristic(successor)
+                    else:
+                        h = heuristic2(successor)
+                    heuristic_times.append(time.time_ns() - h_start_time)
+
                     if should_print:
                         print("Heuristic: ", h)
+                        print("Heuristic2: ", heuristic2(successor))
+                        print("")
                     c = 0
                     if is_greedy != 1:
                         c = cost(array, successor)

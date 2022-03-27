@@ -24,10 +24,10 @@ def sanitize_data():
             for i in range(len(board)):
                 for j in range(len(board)):
                     if board[j][i] != 0:
-                        features.append(j / len(board))
-                        features.append(board[j][i])
-                        totalWeight += board[j][i]
                         rowPos.append(j)
+
+                    features.append(board[j][i]/9)
+                    totalWeight += board[j][i]
 
             for i in range(len(board)):
                 myRow = rowPos[i]
@@ -51,7 +51,6 @@ def sanitize_data():
             sanitized_data = [features, astar_cost]
             training_data.append(sanitized_data)
 
-    # for i in range(len(training_data)):
-    #    training_data[i][1] = round(training_data[i][1] / largest_cost, 3)
-
+    for i in range(len(training_data)):
+        training_data[i][1] = training_data[i][1] / largest_cost
     return training_data, largest_cost

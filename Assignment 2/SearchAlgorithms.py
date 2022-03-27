@@ -6,7 +6,7 @@ import copy
 import heapq
 import numpy as np
 
-use_modified_heuristic = False
+use_modified_heuristic = True
 size = 0
 w = []
 
@@ -106,6 +106,18 @@ def mvToBoard(mv):
     return string
 
 
+def mvTo2DBoard(mv):
+    global size
+    global w
+
+    counter = 0
+    board = np.zeros((6, 6), dtype=float)
+    for i in mv:
+        board[i][counter] = w[counter]
+        counter += 1
+    return board
+
+
 # Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
 class queueTools:
     def __init__(self):
@@ -123,6 +135,7 @@ class queueTools:
 
 def findSolution(array, is_greedy, should_print):
     start_time = time.time()
+    heuristic_times = []
     total_opened = 0
     total_added = 0
     global size
@@ -175,7 +188,7 @@ def findSolution(array, is_greedy, should_print):
             text_file = open("ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
-            return elapsed_time, cost(array, solution[1]), (total_opened / total_added) * math.pow(size, 2)
+            return elapsed_time, cost(array, solution[1]), heuristic_times
 
         openBoard = b[1]
         closed.add(b[0], [b[1]])
@@ -200,7 +213,9 @@ def findSolution(array, is_greedy, should_print):
                 if not sucString in closedList:
                     closedList.append(sucString)
                     n2 = n2 + 1
+                    h_start_time = time.time_ns()
                     h = heuristic(successor)
+                    heuristic_times.append(time.time_ns() - h_start_time)
                     c = 0
                     if is_greedy != 1:
                         c = cost(array, successor)
