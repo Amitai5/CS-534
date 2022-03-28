@@ -6,7 +6,7 @@ import tqdm
 import os
 
 board_size = 6
-gen_data_count = 200
+gen_data_count = 2000
 training_data_directory = os.getcwd() + "\\trainingData"
 
 largest_file_number = 0
@@ -25,7 +25,7 @@ training_data = []
 for i in tqdm.tqdm(range(gen_data_count)):
     new_data = []
     new_board = bw.create_board(board_size, False)
-    board_solution_cost, _, _ = sa.findSolution(new_board, 0, False)
+    _, board_solution_cost, _ = sa.findSolution(new_board, 0, False)
 
     new_data.append(new_board)
     new_data.append(board_solution_cost)

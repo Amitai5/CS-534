@@ -1,56 +1,83 @@
+import os
 import csv
 import sys
 import time
 import math
 import copy
 import heapq
+import torch
+import pandas
 import numpy as np
 import statistics
 
-use_modified_heuristic = False
+model_file = os.getcwd() + "\\models\\neural_network_1.pkl"
+neural_network = pandas.read_pickle(model_file)
+neural_network.to("cpu")
 size = 0
 w = []
 
 
-#Use the neural network here
+# Use the neural network here
 def heuristic(b):
-    global size #size of board MUST BE 6 as is it is written now
-    global w #weights of queens
+    global size  # size of board MUST BE 6 as is it is written now
+    global w  # weights of queens
     features = []
-    #I pull the features from the boards here - you can use these for the NN
+    # I pull the features from the boards here - you can use these for the NN
     # Create features, first 12 are row of queen in column, weight of queen in row
     totalWeight = 0
     totalAttackWeight = 0
     numAttQueens = 0
-    rowPos = []
     heaviestAttacking = 0
 
-    #add each position to features (1st 12) - 1D board here
-    for i in range(len(b)):
-        features.append(b[i])
-        features.append(w[i])
-        totalWeight += w[i]
+    # add each position to feature list (1st 12) - 1D board here
+    board = mvTo2DBoard(b)
+    for i in range(len(board)):
+        for j in range(len(board)):
+            # features.append(board[j][i]/9)
+            totalWeight += board[j][i]
 
-    for i in range(len(b)):
-        myRow = b[i]
+    rowPos = b
+    for i in range(len(board)):
+        myRow = rowPos[i]
         # check for attacks
         for j in range(i + 1, 6):
             if rowPos[j] == myRow or rowPos[j] == myRow + (j - i) or rowPos[j] == myRow - (j - i):
                 numAttQueens += 1
-                heaviestAttacking = max(heaviestAttacking, w[i], w[j])
-                totalAttackWeight += w[i] + w[j]
+                heaviestAttacking = max(heaviestAttacking, board[myRow][i], board[rowPos[j]][j])
+                totalAttackWeight += board[myRow][i] + board[rowPos[j]][j]
 
     # Add last 5 derived features
     features.append(totalAttackWeight / totalWeight)
     features.append(numAttQueens)
-    features.append(statistics.stdev(rowPos))
+    features.append(statistics.stdev(b))
     features.append(heaviestAttacking)
     features.append(totalWeight)
 
-    #calculate heuristic from features
-    #TODO add NN here
+    sanitized_features = torch.Tensor(features)
 
-    return 1#NN output
+    with torch.no_grad():
+        result = neural_network.forward(sanitized_features).detach().numpy()
+    return round(result[0] * 712) * (numAttQueens != 0)
+
+
+def heuristic2(b):
+    global size
+    global w
+
+    # w = weightVector(b) #weight vector
+    d1 = diag1Vector(b)  # diag1 vector
+    d2 = diag2Vector(b)  # diag2 vector
+    hc = 0
+
+    for i in range(size):
+        for j in range(i + 1, size):
+            if b[i] == b[j]:
+                hc +=1;
+            if d1[i] == d1[j]:
+                hc +=1;
+            if d2[i] == d2[j]:
+                hc +=1;
+    return hc
 
 
 def cost(base, new):
@@ -126,6 +153,18 @@ def mvToBoard(mv):
     return string
 
 
+def mvTo2DBoard(mv):
+    global size
+    global w
+
+    counter = 0
+    board = np.zeros((6, 6), dtype=float)
+    for i in mv:
+        board[i][counter] = w[counter]
+        counter += 1
+    return board
+
+
 # Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
 class queueTools:
     def __init__(self):
@@ -141,8 +180,10 @@ class queueTools:
         return len(self.h)
 
 
-def findSolution(array, is_greedy, should_print):
+def findSolution(array, use_nn, should_print):
     start_time = time.time()
+    heuristic_times = []
+    is_greedy = False
     total_opened = 0
     total_added = 0
     global size
@@ -193,7 +234,7 @@ def findSolution(array, is_greedy, should_print):
             text_file = open("ANSWER.txt", "w")
             n = text_file.write(board_string)
             text_file.close()
-            return elapsed_time, cost(array, solution[1]), (total_opened / total_added) * math.pow(size, 2)
+            return elapsed_time, cost(array, solution[1]), heuristic_times
 
         openBoard = b[1]
         closed.add(b[0], [b[1]])
@@ -218,7 +259,17 @@ def findSolution(array, is_greedy, should_print):
                 if not sucString in closedList:
                     closedList.append(sucString)
                     n2 = n2 + 1
-                    h = heuristic(successor)
+                    h_start_time = time.time_ns()
+                    if use_nn:
+                        h = heuristic(successor)
+                    else:
+                        h = heuristic2(successor)
+                    heuristic_times.append(time.time_ns() - h_start_time)
+
+                    if should_print:
+                        print("Heuristic: ", h)
+                        print("Heuristic2: ", heuristic2(successor))
+                        print("")
                     c = 0
                     if is_greedy != 1:
                         c = cost(array, successor)
@@ -229,7 +280,6 @@ def findSolution(array, is_greedy, should_print):
                             solution = (c, successor)
                     else:
                         frontier.add(c + h, successor)
-        if should_print:
-            print("Successors " + str(n) + " added " + str(n2) + " new nodes")
+            # print("Successors " + str(n) + " added " + str(n2) + " new nodes")
         # If solved exit
         # break
