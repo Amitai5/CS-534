@@ -35,7 +35,7 @@ solution = [-1, []]
 
 def cost(base, new):
     global array
-    print(w)
+    # print(w)
 
     b = base
     n = new
@@ -96,7 +96,7 @@ def mvToBoard(mv):
 
 # Wrapper for a HeapQ, mainly provides an "exists" function that tells wheteher a board exists in queue
 
-def findSolution(should_print):
+def findSolution(array, should_print):
     global w
     global k
     global rows
@@ -114,20 +114,12 @@ def findSolution(should_print):
 
     start_time = time.time()
 
-    # load board
-    with open('board.txt', newline='') as csvfile:
-        global k
-        global w
-
-        reader = csv.reader(csvfile, delimiter=',')
-        array = list(reader)
-        size = len(array)
-        k = size
-
-        for i in range(0, size):
-            for j in range(0, size):
-                array[i][j] = int(array[i][j])
-        w = weightVector(array)
+    size = len(array)
+    k = size
+    for i in range(0, size):
+        for j in range(0, size):
+            array[i][j] = int(array[i][j])
+    w = weightVector(array)
 
     rows = [None] * k
     d1 = [None] * (k * 2 - 1)
@@ -159,13 +151,13 @@ def solve(mv):
     array = mv
     k = len(mv)
 
-    print("Board being solved: ")
-    print(mvToBoard(mv))
+    # print("Board being solved: ")
+    # print(mvToBoard(mv))
 
 
-    print("K: ", k)
+    # print("K: ", k)
 
-    print("Weight vector: ", w)
+    # print("Weight vector: ", w)
 
     df = pd.DataFrame()
 
@@ -177,7 +169,7 @@ def solve(mv):
 
     df = df.sort_values("Weight", 0)
 
-    print("Df: ", df)
+    # print("Df: ", df)
 
     # for i in range(k):
     for i in df["Queen/Column"]:
@@ -185,8 +177,8 @@ def solve(mv):
         # addPos(i, ib, mv)
     tryNextQueen()
 
-    print("Finished! Found ", len(solutions), " solutions.")
-    print(solutions)
+    # print("Finished! Found ", len(solutions), " solutions.")
+    # print(solutions)
 
 
 def nextMove(vms, q):
@@ -208,12 +200,12 @@ def nextMove(vms, q):
 
 def tryNextQueen():
     if not ws:  # no more queens to try which means all queens have successfully been placed
-        print("found a solution! :")
-        print(mvToBoard(cmv))
+        # print("found a solution! :")
+        # print(mvToBoard(cmv))
         solutions.append(copy.deepcopy(cmv)) #appends current move vector as a solution
-        print(cmv)
+        # print(cmv)
         c = cost(array, cmv)
-        print("Cost of solution: ", c)
+        # print("Cost of solution: ", c)
 
         if c < solution[0] or solution[0] == -1:
             solution[0] = c
