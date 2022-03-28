@@ -1,5 +1,5 @@
 import part2
-import BoardWrite
+import csvwrite
 import numpy as np
 
 time_batch = []
@@ -32,12 +32,13 @@ def run():
 print("---------------Test Results---------------")
 print("Batch Size: " + str(batch_size) + "\n")
 
-# for i in range(4, board_count + 1):
-#     print("Board Size: " + str(i))
-#     for j in range(0, batch_size):
-#         csvwrite.create_board_csv(i, "board.txt", False)
-#         run_both_algos()
+for i in range(4, board_count + 1):
+    print("Board Size: " + str(i))
+    for j in range(0, batch_size):
+        csvwrite.create_board_csv(i, "board.txt", False)
+        run()
 
+csvwrite.create_board_csv(15, "board.txt", False)
 run()
 printResults("Part2", time_batch, branching_batch, cost_batch)
 print("")
