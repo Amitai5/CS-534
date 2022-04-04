@@ -1,6 +1,6 @@
 import csv
 import sys
-from gridWorld_Q import Agent
+from part1_Q import Agent
 import numpy
 import pandas as pd
 # from oby import Obaro
@@ -26,13 +26,13 @@ def main():
      #   for row in reader:
      #       print(', '.join(row))
 
-    arr = numpy.genfromtxt(file, delimiter='\t', dtype='str')
-    print(arr)
+    #arr = numpy.genfromtxt(file, delimiter='\t', dtype='str')
+    #print(arr)
 
     # Call your function or Class
     # me = Obaro(file, reward_per_action, gamma, time_to_learn, prob_of_moving)
     # print(me.get_height())
-    agent = Agent(arr)
+    agent = Agent()
     agent.play(time_to_learn)
 
 

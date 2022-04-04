@@ -3,6 +3,9 @@ import time
 import numpy as np
 import pandas as pd
 
+BOARD_ROWS = 3
+BOARD_COLS = 4
+BOARD = []
 
 def load_grid(filename):
     grid = pd.read_csv(filename, '\t', header=None).to_numpy()
@@ -72,6 +75,15 @@ class State:
             print(out)
         print('-----------------')
 
+def dispBoard(b,row,col):
+    for i in range(0, row):
+        print('-----------------')
+        out = '| '
+        for j in range(0, col):
+
+            out += "" + str(b[i][j]) + ' | '
+        print(out)
+    print('-----------------')
 
 class Agent:
 
@@ -90,14 +102,16 @@ class Agent:
 
         # initial Q values
         self.Q_values = {}
-        board_rows = len(self.grid)
-        board_cols = len(self.grid[0])
+        self.board_rows = len(self.grid)
+        self.board_cols = len(self.grid[0])
 
-        for i in range(board_rows):
-            for j in range(board_cols):
+        for i in range(self.board_rows):
+            for j in range(self.board_cols):
                 self.Q_values[(i, j)] = {}
                 for a in self.actions:
                     self.Q_values[(i, j)][a] = 0  # Q value is a dict of dict
+
+        self.BOARD_OUT = [['0']*self.board_cols]*self.board_rows
 
     def choose_action(self):
         # choose action with most expected value
@@ -153,6 +167,17 @@ class Agent:
                 # append trace
                 self.states.append([(self.State.state), action])
                 print("current position {} action {}".format(self.State.state, action))
+                #Save state
+                if action=="right":
+                    self.BOARD_OUT[self.State.state[0]][self.State.state[1]] = ">"
+                elif action=="left":
+                    self.BOARD_OUT[self.State.state[0]][self.State.state[1]] = "<"
+                elif action=='up':
+                    self.BOARD_OUT[self.State.state[0]][self.State.state[1]] = "^"
+                elif action=='down':
+                    self.BOARD_OUT[self.State.state[0]][self.State.state[1]] = "v"
+                else:#if soemthing has gone wrong
+                    self.BOARD_OUT[self.State.state[0]][self.State.state[1]] = action
                 # by taking the action, it reaches the next state
                 self.State = self.takeAction(action)
                 # # mark is end
@@ -183,3 +208,5 @@ if __name__ == "__main__":
     ag.play(5)
     print("latest Q-values ... \n")
     print(ag.Q_values)
+    dispBoard(ag.grid,ag.board_rows,ag.board_cols)
+    dispBoard(ag.BOARD_OUT,ag.board_rows,ag.board_cols)
