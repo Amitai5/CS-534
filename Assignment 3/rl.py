@@ -1,5 +1,7 @@
+import csv
 import sys
-from part1_Q import Agent
+from gridWorld_Q import Agent
+import numpy
 import pandas as pd
 # from oby import Obaro
 
@@ -19,10 +21,18 @@ def main():
     print("Its decay rate is", gamma, "and the reward per action is", reward_per_action)
     print("Its transition model will move the agent properly with p =", prob_of_moving)
 
+    #with open(file, newline='') as csvfile:
+     #   reader = csv.reader(csvfile, delimiter='\t', quotechar='|')
+     #   for row in reader:
+     #       print(', '.join(row))
+
+    arr = numpy.genfromtxt(file, delimiter='\t', dtype='str')
+    print(arr)
+
     # Call your function or Class
     # me = Obaro(file, reward_per_action, gamma, time_to_learn, prob_of_moving)
     # print(me.get_height())
-    agent = Agent()
+    agent = Agent(arr)
     agent.play(time_to_learn)
 
 
