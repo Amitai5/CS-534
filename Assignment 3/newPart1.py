@@ -24,12 +24,12 @@ print('Argument List:', str(sys.argv))
 file = sys.argv[1]
 rew = sys.argv[2]
 gamma = sys.argv[3]
-sec = sys.argv[4]
+sec = float(sys.argv[4])
 P = float(sys.argv[5])
 Q = []
 
-def takeAction(s, a):
-    s
+# def takeAction(s, a):
+#     s
 
 def load_grid(filename):
     global Q
@@ -143,7 +143,8 @@ def notTerminal(s):
 
 
 def rl():
-    while timeRemains:
+    startTime = time.time()
+    while time.time() - startTime < sec:
         s = startState
         while notTerminal(s):
             a = determineAction(s)
@@ -155,7 +156,9 @@ def rl():
 
 
 
-board, mm, my = load_grid(file)
+board, startState, my = load_grid(file)
+
+rl()
 
 
 a = determineAction((0, 0))
