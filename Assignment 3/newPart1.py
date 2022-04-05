@@ -86,7 +86,7 @@ def determineAction(s):
 
 def tryA(a):
     tr = np.array(a)
-    print("tr: ", tr)
+    # print("tr: ", tr)
     if random.random() > P:
         if random.random() > .5:
             tr = tr * 2
@@ -100,8 +100,20 @@ def tryA(a):
 def takeAction(s, a):  # /* trickier :-) */
     # /* the ONLY PLACE the transition model should appear in your code */
     s0 = copy.deepcopy(s)
-    a = tryA(a)
-    print("A: ", a)
+    aa = tryA(a)  # actual action to take
+    x = s[0] + aa[0]
+    y = s[1] + aa[1]
+    print("aa: ", aa)
+    if (aa[0] == 2 or aa[1] == 2 or aa[0] == -2 or aa[1] == -2):
+        x1 = s[0] + a[0]
+        y1 = s[0] + a[1]
+        if inRange(s, a) and board[x1][y1] != 'X':
+            s0 = (x1, y1)
+            if inRange(s, aa) and board[x][y] != 'X':
+                    s0 = (x, y)
+    elif inRange(s, aa) and board[x][y] != 'X':
+        s0 = (x, y)
+    return s0
 
 
 def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
@@ -123,6 +135,8 @@ board, mm, my = load_grid(file)
 
 a = determineAction((0, 0))
 print("Action: ", a)
-takeAction((0, 0), a)
+print("s0: ", takeAction((0, 0), a))
+
+# print("bool: ", a.contains(0))
 
 # print(np.array((1, 0)) * 2)
