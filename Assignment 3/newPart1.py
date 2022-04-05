@@ -33,7 +33,7 @@ def takeAction(s, a):
 
 def load_grid(filename):
     global Q
-    grid = pd.read_csv(filename, '\t', header=None).to_numpy()
+    grid = pd.read_csv(filename, delimiter='\t',header=None).to_numpy()
     Q = copy.deepcopy(grid)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -117,7 +117,23 @@ def takeAction(s, a):  # /* trickier :-) */
 
 
 def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
-    x
+    #s = x,y pair
+    #s0 = x,y pair
+    #a = movement [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    global gamma #passed as parameter
+    global rew
+    alpha = 0.5 #learning rate - higher means faster
+    Qt=Q[s[0]][s[1]]#Current Q-value
+    Qnext = Q[s[0]+a[0]][s[1]+a[1]] #next reward estimate - from the Q-value of the square you want to be at
+    Qmaxfuture = Qnext #need to calcualte for Q-learning, maximum future reward - currently estimate for testing
+
+    SARSA = 1#set to 1 for SARSA, 2 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
+    if SARSA:
+        #SARSA
+        Q[s[0]][s[1]] = Qt + alpha*(rew + gamma*Qnext-Qt)
+    else:
+        #Q learning
+        Q[s[0]][s[1]] = Qt + alpha*(rew + gamma*Qmaxfuture-Qt)
 
 
 def rl():
