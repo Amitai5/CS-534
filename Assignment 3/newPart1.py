@@ -87,6 +87,7 @@ def determineAction(s):
 def tryA(a):
     tr = np.array(a)
     # print("tr: ", tr)
+    print("P: ", P)
     if random.random() > P:
         if random.random() > .5:
             tr = tr * 2
@@ -136,14 +137,22 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
         Q[s[0]][s[1]] = Qt + alpha*(rew + gamma*Qmaxfuture-Qt)
 
 
+def notTerminal(s):
+    # print("nt: ", board[s])
+    return board[s] == 0
+
+
 def rl():
     while timeRemains:
         s = startState
         while notTerminal(s):
             a = determineAction(s)
-            s0 = takeAction(s,a)
+            s0 = takeAction(s, a)
             update(s, a, s0)
             s = s0
+
+
+
 
 
 board, mm, my = load_grid(file)
@@ -152,6 +161,9 @@ board, mm, my = load_grid(file)
 a = determineAction((0, 0))
 print("Action: ", a)
 print("s0: ", takeAction((0, 0), a))
+
+# print("Bool: ", notTerminal((0,1)))
+
 
 # print("bool: ", a.contains(0))
 
