@@ -26,6 +26,13 @@ rew = float(sys.argv[2])
 gamma = float(sys.argv[3])
 sec = float(sys.argv[4])
 P = float(sys.argv[5])
+
+print("File name: ", file)
+print("Reward: ", rew)
+print("Gamma: ", gamma)
+print("Time(seconds): ", sec)
+print("P(success): ", P)
+
 Q = []
 heatmap = []
 count = 0
@@ -33,15 +40,19 @@ stay = 0
 double = 0
 backwards = 0
 
+term = []
+
 # def takeAction(s, a):
 #     s
 
 def load_grid(filename):
     global Q
     global heatmap
+
     grid = pd.read_csv(filename, delimiter='\t',header=None).to_numpy()
     Q = copy.deepcopy(grid)
     heatmap = copy.deepcopy(grid)
+
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             heatmap[i][j] = 0
@@ -53,6 +64,7 @@ def load_grid(filename):
             else:
                 Q[i][j] = int(grid[i][j])
                 grid[i][j] = int(grid[i][j])
+
     print("initial Q: \n", Q)
     # heatmap = [0] * len(grid[0])
     # heatmap = [heatmap] * len(grid)
@@ -84,10 +96,11 @@ def q(s, a):
     return tr
 
 
-def determineAction(s):
+def determineAction(s, r=True):
+
     a = random.choice(moves)
     # /* will want to make exploration more complex */
-    if random.random() > epsilon:
+    if random.random() > epsilon or not r:
         best = q(s, a)
         for m in moves:
             current = q(s, m)
@@ -147,6 +160,13 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     #a = movement [(1, 0), (-1, 0), (0, 1), (0, -1)]
     global gamma #passed as parameter
     global rew
+
+    R = rew
+
+    if not notTerminal(s):
+        print(board[s])
+        R += board[s]
+
     alpha = 0.5 #learning rate - higher means faster
     Qt=Q[s]#Current Q-value
     # s1 = takeAction(s, a, True)
@@ -155,13 +175,14 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
 
     # Qnext = Q[s1] #next reward estimate - from the Q-value of the square you want to be at
+    # Qnext = q(s0, a0)
     Qnext = q(s0, a0)
     Qmaxfuture = Qnext #need to calcualte for Q-learning, maximum future reward - currently estimate for testing
 
     SARSA = 1#set to 1 for SARSA, 2 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
     if SARSA:
         #SARSA
-        Q[s] = Qt + alpha*(rew + gamma*Qnext-Qt)
+        Q[s] = Qt + alpha*(R + gamma*Qnext-Qt)
     else:
         #Q learning
         Q[s[0]][s[1]] = Qt + alpha*(rew + gamma*Qmaxfuture-Qt)
@@ -169,8 +190,8 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
 def notTerminal(s):
     # print("nt: ", board[s])
-    if(board[s] == 'X'):
-        print("Board(s): ", board[s], "\nSomething is wrong")
+    # if(board[s] == 'X'):
+    #     print("Board(s): ", board[s], "\nSomething is wrong")
     return board[s] == 0 or board[s] == 'S'
 
 
@@ -186,6 +207,45 @@ def printArray(arr):
         string = string + "\n"
     print(string)
 
+def printTermArray(arr):
+    string = ""
+    for i in range(len(arr)):
+        for j in range(len(arr[i])):
+            if notTerminal((i, j)):
+                string = string + "N"
+            else:
+                print(board[i, j])
+                string += "T"
+            string += "\t"
+        string = string + "\n"
+    print(string)
+
+
+def printBestMoves():
+    string = ""
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if board[i, j] == 0 or board[i, j] == 'S':
+                a = determineAction((i, j), False)
+                c = ""
+                if a == (1, 0):
+                    c = "v"
+                elif a == (-1, 0):
+                    c = "^"
+                elif a == (0, 1):
+                    c = ">"
+                elif a == (0, -1):
+                    c = "<"
+                else:
+                    c = "broke"
+            else:
+                c = str(board[i, j])
+            string += "\t" + c + "\t"
+        string += "\n"
+    print(string)
+
+
+
 
 def rl():
     global count
@@ -200,21 +260,27 @@ def rl():
             count = count + 1
             s = s0
             # print("Q: \n", Q)
-    print("Q: \n")
+        # print("Term reached at ", s)
+    print("Q:")
 
     printArray(Q)
-    print("Heatmap: \n")
+    print("Heatmap:")
     for i in range(len(heatmap)):
         for j in range(len(heatmap[0])):
             heatmap[i, j] = (heatmap[i, j] / count) * 100
     printArray(heatmap)
     print("Stay, Double, Backwards: ", stay, double, backwards)
-
+    printBestMoves()
 
 
 
 
 board, startState, my = load_grid(file)
+
+printTermArray(board)
+
+
+
 
 rl()
 
