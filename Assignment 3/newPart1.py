@@ -29,6 +29,9 @@ P = float(sys.argv[5])
 Q = []
 heatmap = []
 count = 0
+stay = 0
+double = 0
+backwards = 0
 
 # def takeAction(s, a):
 #     s
@@ -72,7 +75,7 @@ def inRange(s, a):
 
 
 def q(s, a):
-    tr = Q[s[0]][s[1]]  # default, reflected by border or barrier
+    tr = Q[s]  # default, reflected by border or barrier
     if inRange(s, a):
         x = s[0] + a[0]
         y = s[1] + a[1]
@@ -95,16 +98,24 @@ def determineAction(s):
 
 
 def tryA(a):
+    global stay
+    global double
+    global backwards
     tr = np.array(a)
     # print("tr: ", tr)
     # print("P: ", P)
     if random.random() > P:
+
         if random.random() > .5:
             tr = tr * 2
+            double += 1
             # print("forward 2")
         else:
             tr = tr * -1
+            backwards += 1
             # print("back 1")
+    else:
+        stay += 1
     return tr[0], tr[1]
 
 
@@ -118,13 +129,13 @@ def takeAction(s, a, bool=False):  # /* trickier :-) */
     x = s[0] + aa[0]
     y = s[1] + aa[1]
     # print("aa: ", aa)
-    if (aa[0] == 2 or aa[1] == 2 or aa[0] == -2 or aa[1] == -2):
+    if aa[0] == 2 or aa[1] == 2 or aa[0] == -2 or aa[1] == -2:
         x1 = s[0] + a[0]
-        y1 = s[0] + a[1]
+        y1 = s[1] + a[1]
         if inRange(s, a) and board[x1][y1] != 'X':
             s0 = (x1, y1)
             if inRange(s, aa) and board[x][y] != 'X':
-                    s0 = (x, y)
+                s0 = (x, y)
     elif inRange(s, aa) and board[x][y] != 'X':
         s0 = (x, y)
     return s0
@@ -138,7 +149,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     global rew
     alpha = 0.5 #learning rate - higher means faster
     Qt=Q[s]#Current Q-value
-    s1 = takeAction(s, a, True)
+    # s1 = takeAction(s, a, True)
 
     a0 = determineAction(s0)
 
@@ -168,7 +179,7 @@ def printArray(arr):
     for i in range(len(arr)):
         for j in range(len(arr[i])):
             if arr[i, j] != 'X':
-                string = string + str(np.round(float(arr[i, j]), 4))
+                string = string + str(np.round(float(arr[i, j]), 2))
             else:
                 string += str(arr[i, j])
             string += "\t"
@@ -195,8 +206,9 @@ def rl():
     print("Heatmap: \n")
     for i in range(len(heatmap)):
         for j in range(len(heatmap[0])):
-            heatmap[i, j] = heatmap[i, j] / count
+            heatmap[i, j] = (heatmap[i, j] / count) * 100
     printArray(heatmap)
+    print("Stay, Double, Backwards: ", stay, double, backwards)
 
 
 
