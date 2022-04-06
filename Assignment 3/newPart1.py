@@ -163,20 +163,28 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     R = rew
 
-    if not notTerminal(s):
-        print(board[s])
-        R += board[s]
+    if not notTerminal(s0):
+        # print(board[s])
+        R += float(board[s0])
+        Qnext = 0
 
-    alpha = 0.5 #learning rate - higher means faster
+    else:
+        a0 = determineAction(s0)
+        Qnext = q(s0, a0)
+
+    # s1 = takeAction(s, a, True)
+
+    alpha = 0.7 #learning rate - higher means faster
     Qt=Q[s]#Current Q-value
     # s1 = takeAction(s, a, True)
 
-    a0 = determineAction(s0)
+
+    # a1 = determineAction(s1)
 
 
     # Qnext = Q[s1] #next reward estimate - from the Q-value of the square you want to be at
     # Qnext = q(s0, a0)
-    Qnext = q(s0, a0)
+    # Qnext = q(s1, a1)
     Qmaxfuture = Qnext #need to calcualte for Q-learning, maximum future reward - currently estimate for testing
 
     SARSA = 1#set to 1 for SARSA, 2 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
