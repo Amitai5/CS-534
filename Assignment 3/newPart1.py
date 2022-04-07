@@ -52,25 +52,53 @@ def load_grid(filename):
     grid = pd.read_csv(filename, delimiter='\t',header=None).to_numpy()
     Q = copy.deepcopy(grid)
     heatmap = copy.deepcopy(grid)
+    # qCell = [["a", "b", "c"],
+    #          ["d", "e", "f"],
+    #          ["g", "h", "i"]]
+    qCell = [[10.0, 0.0, 0.0],
+             [0.0, 10.0, 10.0],
+             [0.0, 10.0, 10.0]]
+    qCell = np.array(qCell)
+
+    print(qCell)
+
+    print(type(qCell[0, 0]))
+
+    # print(qCell[0, 0])
+    # print(qCell[0, 1])
+    # print(qCell[1, 0])
+    # print(qCell[1, 1])
+    #
+    # print("next")
+    #
+    # print(qCell[0, -1])
+    # print(qCell[0, 1])
+    # print(qCell[-1, 0])
+    # print(qCell[1, 0])
+
 
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             heatmap[i][j] = 0
+            Q[i][j] = copy.deepcopy(qCell)
             if grid[i][j] == "S":
                 s = (i, j)
-                Q[i][j] = 0
+
             elif grid[i][j] == "X":
                 x = (i, j)
             else:
-                Q[i][j] = int(grid[i][j])
                 grid[i][j] = int(grid[i][j])
+            # print(Q)
+            # Q[i, j][1, 1] = grid[i, j]
+
+
 
     print("Board:")
     printArray(Q)
 
     return grid, s, x
 
-epsilon = .2
+epsilon = .3
 
 moves = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
@@ -82,12 +110,18 @@ def inRange(s, a):
 
 
 def q(s, a):
-    tr = Q[s]  # default, reflected by border or barrier
-    if inRange(s, a):
-        x = s[0] + a[0]
-        y = s[1] + a[1]
-        if Q[x][y] != "X":
-            tr = Q[x][y]  # not reflected, valid move
+
+    # print("S: ", s)
+    # print("A: ", a)
+
+
+    tr = Q[s][a]  # default, reflected by border or barrier
+    # if inRange(s, a):
+    #     x = s[0] + a[0]
+    #     y = s[1] + a[1]
+    #     if Q[x][y] != "X":
+    #         tr = Q[x][y]  # not reflected, valid move
+    # print("Tr: ", tr)
     return tr
 
 
@@ -103,6 +137,11 @@ def determineAction(s, r=True):
                 best = current
                 a = m
     return a
+
+
+def explore():
+    return random.random() > epsilon
+    # return timeR < sec / 2 or random.random() <
 
 
 def tryA(a):
@@ -154,7 +193,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     R = rew #cost of movement
 
-    if not notTerminal(s0):
+    if not notTerminal(s0): #if terminal
         R += float(board[s0])
         Qnext = 0
         Qmaxfuture = 0
@@ -167,8 +206,9 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     # s1 = takeAction(s, a, True)
 
-    alpha = 0.5 #learning rate - higher means faster
-    Qt=Q[s]#Current Q-value
+    alpha = 0.4 #learning rate - higher means faster
+    # Qt=Q[s]#Current Q-value
+    Qt = q(s, a)
     # s1 = takeAction(s, a, True)
 
 
@@ -179,13 +219,15 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     # Qnext = q(s0, a0)
     # Qnext = q(s1, a1)
 
-    SARSA = False#set to 1 for SARSA, 0 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
+    SARSA = False  # set to 1 for SARSA, 0 for Q-learning
     if SARSA:
         #SARSA
-        Q[s] = Qt + alpha*(R + gamma*Qnext-Qt)
+        Q[s][a] = float(Qt + alpha*(R + gamma*Qnext-Qt))
+        # print(Q[s][a])
+
     else:
         #Q learning
-        Q[s] = Qt + alpha*(R + gamma*Qmaxfuture-Qt)
+        Q[s][a] = Qt + alpha*(R + gamma*Qmaxfuture-Qt)
 
 
 def notTerminal(s):
@@ -204,6 +246,44 @@ def printArray(arr):
             string += "\t"
         string = string + "\n"
     print(string)
+
+def printQ():
+    string = ""
+    for i in range(len(Q)):
+        for j in range(len(Q[0])):
+            if notTerminal((i, j)):
+
+                sq = 0
+                for m in moves:
+                    sq += Q[i, j][m]
+                sq = sq / len(moves)
+                format_float = "{:05.2f}".format(float(sq))
+            else:
+                format_float = str(board[i, j]) + "   "
+            string += str(format_float) + "\t"
+        string += "\n"
+    print(string)
+
+
+def printQMax():
+    string = ""
+    for i in range(len(Q)):
+        for j in range(len(Q[0])):
+            if notTerminal((i, j)):
+
+                sq = Q[i, j][moves[0]]
+                for m in moves:
+                    n = Q[i, j][m]
+                    if n > sq:
+                        sq = n
+                sq = sq / len(moves)
+                format_float = "{:05.2f}".format(float(sq))
+            else:
+                format_float = str(board[i, j]) + "   "
+            string += str(format_float) + "\t"
+        string += "\n"
+    print(string)
+
 
 def printTermArray(arr):
     string = ""
@@ -261,7 +341,11 @@ def rl():
             s = s0
     print("--------------------------------------------------\nDone\n\nQ:")
 
-    printArray(Q)
+    # printArray(Q)
+    printQ()
+    print("\nQmax:")
+    printQMax()
+    # print(Q)
     print("Heatmap:")
     for i in range(len(heatmap)):
         for j in range(len(heatmap[0])):
