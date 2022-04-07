@@ -65,7 +65,8 @@ def load_grid(filename):
                 Q[i][j] = int(grid[i][j])
                 grid[i][j] = int(grid[i][j])
 
-    print("Board: \n", Q)
+    print("Board:")
+    printArray(Q)
 
     return grid, s, x
 
