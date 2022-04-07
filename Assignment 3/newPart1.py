@@ -161,11 +161,12 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     else:
         a0 = determineAction(s0)
         Qnext = q(s0, a0) #SARSA, value after next action
-        Qmaxfuture = Q[s0]  # Q-learning, maximum future reward - Q value of next state
+        aM = determineAction(s0, False)
+        Qmaxfuture = q(s0, aM)  # Q-learning, maximum future reward - Q value of next state
 
     # s1 = takeAction(s, a, True)
 
-    alpha = 0.7 #learning rate - higher means faster
+    alpha = 0.5 #learning rate - higher means faster
     Qt=Q[s]#Current Q-value
     # s1 = takeAction(s, a, True)
 
@@ -177,7 +178,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     # Qnext = q(s0, a0)
     # Qnext = q(s1, a1)
 
-    SARSA = 1#set to 1 for SARSA, 0 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
+    SARSA = False#set to 1 for SARSA, 0 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
     if SARSA:
         #SARSA
         Q[s] = Qt + alpha*(R + gamma*Qnext-Qt)
