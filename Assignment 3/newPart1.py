@@ -19,7 +19,7 @@ import copy
 # e.g. grid_sample.txt -.1 .8 5 .8
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
-print('Argument List:', str(sys.argv))
+#print('Argument List:', str(sys.argv))
 
 file = sys.argv[1]
 rew = float(sys.argv[2])
@@ -65,15 +65,9 @@ def load_grid(filename):
                 Q[i][j] = int(grid[i][j])
                 grid[i][j] = int(grid[i][j])
 
-    print("initial Q: \n", Q)
-    # heatmap = [0] * len(grid[0])
-    # heatmap = [heatmap] * len(grid)
-
-    print("heatmap: \n", heatmap)
+    print("Board: \n", Q)
 
     return grid, s, x
-
-print(load_grid(file))
 
 epsilon = .2
 
@@ -115,18 +109,14 @@ def tryA(a):
     global double
     global backwards
     tr = np.array(a)
-    # print("tr: ", tr)
-    # print("P: ", P)
     if random.random() > P:
 
         if random.random() > .5:
             tr = tr * 2
             double += 1
-            # print("forward 2")
         else:
             tr = tr * -1
             backwards += 1
-            # print("back 1")
     else:
         stay += 1
     return tr[0], tr[1]
@@ -161,16 +151,17 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     global gamma #passed as parameter
     global rew
 
-    R = rew
+    R = rew #cost of movement
 
     if not notTerminal(s0):
-        # print(board[s])
         R += float(board[s0])
         Qnext = 0
+        Qmaxfuture = 0
 
     else:
         a0 = determineAction(s0)
-        Qnext = q(s0, a0)
+        Qnext = q(s0, a0) #SARSA, value after next action
+        Qmaxfuture = Q[s0]  # Q-learning, maximum future reward - Q value of next state
 
     # s1 = takeAction(s, a, True)
 
@@ -185,21 +176,17 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     # Qnext = Q[s1] #next reward estimate - from the Q-value of the square you want to be at
     # Qnext = q(s0, a0)
     # Qnext = q(s1, a1)
-    Qmaxfuture = Qnext #need to calcualte for Q-learning, maximum future reward - currently estimate for testing
 
-    SARSA = 1#set to 1 for SARSA, 2 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
+    SARSA = 1#set to 1 for SARSA, 0 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
     if SARSA:
         #SARSA
         Q[s] = Qt + alpha*(R + gamma*Qnext-Qt)
     else:
         #Q learning
-        Q[s[0]][s[1]] = Qt + alpha*(rew + gamma*Qmaxfuture-Qt)
+        Q[s] = Qt + alpha*(R + gamma*Qmaxfuture-Qt)
 
 
 def notTerminal(s):
-    # print("nt: ", board[s])
-    # if(board[s] == 'X'):
-    #     print("Board(s): ", board[s], "\nSomething is wrong")
     return board[s] == 0 or board[s] == 'S'
 
 
@@ -208,24 +195,27 @@ def printArray(arr):
     for i in range(len(arr)):
         for j in range(len(arr[i])):
             if arr[i, j] != 'X':
-                string = string + str(np.round(float(arr[i, j]), 2))
+                format_float = "{:05.2f}".format(float(arr[i, j]))
+                string = string + str(format_float)
             else:
-                string += str(arr[i, j])
+                string += '  X  ' #Extra spaces included for formatting
             string += "\t"
         string = string + "\n"
     print(string)
 
 def printTermArray(arr):
     string = ""
+    stringTerm = "Terminal States:"
     for i in range(len(arr)):
         for j in range(len(arr[i])):
             if notTerminal((i, j)):
-                string = string + "N"
+                string += "N"
             else:
-                print(board[i, j])
+                stringTerm+="\t"+str(board[i, j])
                 string += "T"
             string += "\t"
         string = string + "\n"
+    print(stringTerm)
     print(string)
 
 
@@ -267,9 +257,7 @@ def rl():
             heatmap[s0] += 1
             count = count + 1
             s = s0
-            # print("Q: \n", Q)
-        # print("Term reached at ", s)
-    print("Q:")
+    print("--------------------------------------------------\nDone\n\nQ:")
 
     printArray(Q)
     print("Heatmap:")
@@ -281,28 +269,10 @@ def rl():
     printBestMoves()
 
 
-
-
 board, startState, my = load_grid(file)
 
 printTermArray(board)
 
-
-
-
+print("\n--------------------------------------------------\nRunning...\n")
+#run learning
 rl()
-
-
-
-
-
-# a = determineAction((0, 0))
-# print("Action: ", a)
-# print("s0: ", takeAction((0, 0), a))
-
-# print("Bool: ", notTerminal((0,1)))
-
-
-# print("bool: ", a.contains(0))
-
-# print(np.array((1, 0)) * 2)
