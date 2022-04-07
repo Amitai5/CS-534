@@ -94,7 +94,7 @@ def load_grid(filename):
 
 
     print("Board:")
-    printArray(Q)
+    # printArray(Q)
 
     return grid, s, x
 
@@ -129,7 +129,7 @@ def determineAction(s, r=True):
 
     a = random.choice(moves)
     # /* will want to make exploration more complex */
-    if random.random() > epsilon or not r:
+    if explore() or not r:
         best = q(s, a)
         for m in moves:
             current = q(s, m)
