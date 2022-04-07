@@ -41,6 +41,7 @@ double = 0
 backwards = 0
 
 term = []
+timeR = 0
 
 # def takeAction(s, a):
 #     s
@@ -94,7 +95,7 @@ def determineAction(s, r=True):
 
     a = random.choice(moves)
     # /* will want to make exploration more complex */
-    if random.random() > epsilon or not r:
+    if explore() or not r:
         best = q(s, a)
         for m in moves:
             current = q(s, m)
@@ -102,6 +103,10 @@ def determineAction(s, r=True):
                 best = current
                 a = m
     return a
+
+def explore():
+    # random.random() > epsilon
+    return timeR < sec / 2 or random.random()
 
 
 def tryA(a):
@@ -166,7 +171,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     # s1 = takeAction(s, a, True)
 
-    alpha = 0.5 #learning rate - higher means faster
+    alpha = 0.4 #learning rate - higher means faster
     Qt=Q[s]#Current Q-value
     # s1 = takeAction(s, a, True)
 
@@ -178,7 +183,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     # Qnext = q(s0, a0)
     # Qnext = q(s1, a1)
 
-    SARSA = False#set to 1 for SARSA, 0 for Q-learning - I think SARSA should run, but Q-learning is not fully implemented
+    SARSA = False#set to 1 for SARSA, 0 for Q-learning
     if SARSA:
         #SARSA
         Q[s] = Qt + alpha*(R + gamma*Qnext-Qt)
@@ -248,8 +253,10 @@ def printBestMoves():
 
 def rl():
     global count
+    global timeR
     startTime = time.time()
-    while time.time() - startTime < sec:
+    # timeR = 0
+    while timeR < sec:
         s = startState
         while notTerminal(s):
             a = determineAction(s)
@@ -258,6 +265,7 @@ def rl():
             heatmap[s0] += 1
             count = count + 1
             s = s0
+        timeR = time.time() - startTime
     print("--------------------------------------------------\nDone\n\nQ:")
 
     printArray(Q)
