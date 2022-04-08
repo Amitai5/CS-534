@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import random
 import copy
+import os
 
 
 
@@ -62,6 +63,8 @@ def load_grid(filename):
     global Q
     global heatmap
 
+    filename = os.getcwd() + "\\testBoards\\grid" + filename + ".txt"
+
     grid = pd.read_csv(filename, delimiter='\t',header=None).to_numpy()
     Q = copy.deepcopy(grid)
     heatmap = copy.deepcopy(grid)
@@ -77,6 +80,8 @@ def load_grid(filename):
     print(type(qCell[0, 0]))
 
     x = []
+
+    print(grid)
 
 
     for i in range(len(grid)):
@@ -151,6 +156,8 @@ def explore():
         # then gradual towards greedy
     elif policy == "g":
         return random.random() < timeR / sec  # policy g, gradual start high explore, end greedy
+    elif policy == "h":
+        return timeR < sec/10 or random.random() < .01
 
 
 def tryA(a):
@@ -237,7 +244,7 @@ def printArray(arr):
     for i in range(len(arr)):
         for j in range(len(arr[i])):
             if arr[i, j] != 'X':
-                format_float = "{:05.2f}".format(float(arr[i, j]))
+                format_float = "{:2.0f}".format(float(arr[i, j]))
                 string = string + str(format_float)
             else:
                 string += '  X  ' #Extra spaces included for formatting
