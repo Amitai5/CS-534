@@ -18,6 +18,8 @@ alpha_range = [0.01, 0.25, 0.50, 0.75, 0.90, 1.00]
 def test_param_values(use_sarsa, test_range, param_name, param_symbol):
     print("\nTesting " + param_name + " Values...")
     param_type = param_name.lower()[0]
+    max_y = -1000
+    min_y = 1000
     sleep(0.5)
 
     for test_point in tqdm.tqdm(test_range):
@@ -26,13 +28,19 @@ def test_param_values(use_sarsa, test_range, param_name, param_symbol):
         scatter_points_x = []
         scatter_points_y = []
 
-        for i in range(1, 5):
+        for i in range(1, 7):
             filename = os.getcwd() + "\\testBoards\\grid" + str(i) + ".txt"
 
             alpha = test_point if param_type == "a" else default_alpha
             gamma = test_point if param_type == "g" else default_gamma
             epsilon = test_point if param_type == "e" else default_epsilon
             time, rew = rl(filename, time_interval, max_time, use_sarsa, alpha, epsilon, gamma)
+
+            if np.min(rew) < min_y:
+                min_y = np.min(rew)
+
+            if np.max(rew) > max_y:
+                max_y = np.max(rew)
 
             graph_points_x = [x + y for x, y in zip(graph_points_x, time)]
             graph_points_y = [x + y for x, y in zip(graph_points_y, rew)]
@@ -41,16 +49,23 @@ def test_param_values(use_sarsa, test_range, param_name, param_symbol):
 
         graph_points_x = [x / 4 for x in graph_points_x]
         graph_points_y = [x / 4 for x in graph_points_y]
-        label_string = param_symbol + " = " + str(test_point)
+        y_final = np.round(graph_points_y[len(graph_points_y) - 1], 2)
+        label_string = param_symbol + " = " + str(test_point) + ", conv = " + str(y_final)
 
         plt.plot(graph_points_x, graph_points_y, label=label_string)
         plt.scatter(scatter_points_x, scatter_points_y, s=12, alpha=0.15)
 
-    plt.title("Comparing " + param_name + " Values (" + ("SARSA)" if use_sarsa else "QLearning)"))
+    use_sarsa_string = ("SARSA)" if use_sarsa else "QLearn)")
+    plt.title("Comparing " + param_name + " Values (" + use_sarsa_string)
+    plt.yticks(np.arange(min_y, max_y, (max_y - min_y) / 10))
     plt.xlabel("Time (sec)")
     plt.ylabel("Reward")
     plt.legend()
-    plt.show()
+    plt.grid()
+
+    plt.savefig(os.getcwd() + "\\graphs\\" + param_name +
+                "Values (" + str(max_time) + "sec, " + use_sarsa_string + ".png")
+    plt.clf()
 
 
 max_time = 0.25
