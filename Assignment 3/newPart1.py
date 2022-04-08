@@ -42,6 +42,9 @@ backwards = 0
 
 term = []
 
+timeR = 0
+startTime = 0
+
 # def takeAction(s, a):
 #     s
 
@@ -98,7 +101,7 @@ def load_grid(filename):
 
     return grid, s, x
 
-epsilon = .3
+epsilon = .7
 
 moves = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
@@ -140,8 +143,10 @@ def determineAction(s, r=True):
 
 
 def explore():
-    return random.random() > epsilon
-    # return timeR < sec / 2 or random.random() <
+    global timeR
+    # return random.random() > epsilon
+    timeR = time.time() - startTime
+    return timeR < sec / 2 or random.random() < timeR / sec
 
 
 def tryA(a):
@@ -206,7 +211,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     # s1 = takeAction(s, a, True)
 
-    alpha = 0.4 #learning rate - higher means faster
+    alpha = 0.01 #learning rate - higher means faster
     # Qt=Q[s]#Current Q-value
     Qt = q(s, a)
     # s1 = takeAction(s, a, True)
@@ -329,8 +334,10 @@ def printBestMoves():
 
 def rl():
     global count
+    global timeR
+    global startTime
     startTime = time.time()
-    while time.time() - startTime < sec:
+    while timeR < sec:
         s = startState
         while notTerminal(s):
             a = determineAction(s)
@@ -339,6 +346,7 @@ def rl():
             heatmap[s0] += 1
             count = count + 1
             s = s0
+        timeR = time.time() - startTime
     print("--------------------------------------------------\nDone\n\nQ:")
 
     # printArray(Q)
