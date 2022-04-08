@@ -19,7 +19,11 @@ import copy
 # e.g. grid_sample.txt -.1 .8 5 .8
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
-#print('Argument List:', str(sys.argv))
+
+# if wrong parameters input
+if len(sys.argv) != 6:
+    print("Format: rl.py <filename> <reward> <gamma> <time to learn> <movement probability>")
+    exit(1)
 
 file = sys.argv[1]
 rew = float(sys.argv[2])
@@ -42,9 +46,11 @@ backwards = 0
 
 term = []
 
-# def takeAction(s, a):
-#     s
+# parameters
+alpha = 0.25 # learning rate - higher means faster
+epsilon = .1 # chance to explore
 
+# Load the board from the given file
 def load_grid(filename):
     global Q
     global heatmap
@@ -61,20 +67,7 @@ def load_grid(filename):
     qCell = np.array(qCell)
 
     print(qCell)
-
     print(type(qCell[0, 0]))
-
-    # print(qCell[0, 0])
-    # print(qCell[0, 1])
-    # print(qCell[1, 0])
-    # print(qCell[1, 1])
-    #
-    # print("next")
-    #
-    # print(qCell[0, -1])
-    # print(qCell[0, 1])
-    # print(qCell[-1, 0])
-    # print(qCell[1, 0])
 
 
     for i in range(len(grid)):
@@ -88,21 +81,15 @@ def load_grid(filename):
                 x = (i, j)
             else:
                 grid[i][j] = int(grid[i][j])
-            # print(Q)
-            # Q[i, j][1, 1] = grid[i, j]
 
-
-
-    print("Board:")
+    # print("Board:")
     # printArray(Q)
-
     return grid, s, x
 
-epsilon = .3
-
+# possible moves (up,down,left,right)
 moves = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-
+# Determine if action is within the board's boundaries
 def inRange(s, a):
     x = s[0] + a[0]
     y = s[1] + a[1]
@@ -141,8 +128,6 @@ def determineAction(s, r=True):
 
 def explore():
     return random.random() > epsilon
-    # return timeR < sec / 2 or random.random() <
-
 
 def tryA(a):
     global stay
@@ -162,16 +147,15 @@ def tryA(a):
     return tr[0], tr[1]
 
 
-def takeAction(s, a, bool=False):  # /* trickier :-) */
+def takeAction(s, a):  # /* trickier :-) */
     # /* the ONLY PLACE the transition model should appear in your code */
     s0 = copy.deepcopy(s)
-    if not bool:
-        aa = tryA(a)  # actual action to take
-    else:
-        aa = a
+
+    aa = tryA(a)  # actual action to take
+
     x = s[0] + aa[0]
     y = s[1] + aa[1]
-    # print("aa: ", aa)
+
     if aa[0] == 2 or aa[1] == 2 or aa[0] == -2 or aa[1] == -2:
         x1 = s[0] + a[0]
         y1 = s[1] + a[1]
@@ -185,13 +169,13 @@ def takeAction(s, a, bool=False):  # /* trickier :-) */
 
 
 def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
-    #s = x,y pair
-    #s0 = x,y pair
-    #a = movement [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    global gamma #passed as parameter
-    global rew
+    # s = x,y pair
+    # s0 = x,y pair
+    # a = movement [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    global gamma # passed as parameter
+    global rew # Parameter - cost of movement
 
-    R = rew #cost of movement
+    R = rew  #cost of movement
 
     if not notTerminal(s0): #if terminal
         R += float(board[s0])
@@ -200,24 +184,12 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
 
     else:
         a0 = determineAction(s0)
-        Qnext = q(s0, a0) #SARSA, value after next action
-        aM = determineAction(s0, False)
+        Qnext = q(s0, a0) # SARSA, value after next action
+        aM = determineAction(s0, False) # Best action to take from S0
         Qmaxfuture = q(s0, aM)  # Q-learning, maximum future reward - Q value of next state
 
-    # s1 = takeAction(s, a, True)
-
-    alpha = 0.4 #learning rate - higher means faster
-    # Qt=Q[s]#Current Q-value
+    global alpha # learning rate - higher means faster
     Qt = q(s, a)
-    # s1 = takeAction(s, a, True)
-
-
-    # a1 = determineAction(s1)
-
-
-    # Qnext = Q[s1] #next reward estimate - from the Q-value of the square you want to be at
-    # Qnext = q(s0, a0)
-    # Qnext = q(s1, a1)
 
     SARSA = False  # set to 1 for SARSA, 0 for Q-learning
     if SARSA:
@@ -325,12 +297,11 @@ def printBestMoves():
     print(string)
 
 
-
-
+# Runs learning for the specified time
 def rl():
     global count
-    startTime = time.time()
-    while time.time() - startTime < sec:
+    start_time = time.time()
+    while time.time() - start_time < sec:
         s = startState
         while notTerminal(s):
             a = determineAction(s)
@@ -340,25 +311,26 @@ def rl():
             count = count + 1
             s = s0
     print("--------------------------------------------------\nDone\n\nQ:")
-
-    # printArray(Q)
     printQ()
     print("\nQmax:")
     printQMax()
-    # print(Q)
+
     print("Heatmap:")
     for i in range(len(heatmap)):
         for j in range(len(heatmap[0])):
             heatmap[i, j] = (heatmap[i, j] / count) * 100
     printArray(heatmap)
-    print("Stay, Double, Backwards: ", stay, double, backwards)
+
+    print("Unchanged, Double, Backwards: ", stay, double, backwards) # Count of number of moves that were as intended, 2 spaces forward, or backwards
     printBestMoves()
 
 
+
+# Starting code - load file, print the initial board, then run learning
 board, startState, my = load_grid(file)
 
 printTermArray(board)
 
 print("\n--------------------------------------------------\nRunning...\n")
-#run learning
+# run learning
 rl()
