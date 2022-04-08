@@ -6,9 +6,10 @@ import copy
 
 P = 0.7  # Blocked value
 rew = -0.1  # Standard Value
-gamma = 0.67  # Blocked Value
+gamma = 0
 alpha = 0
 epsilon = 0
+is_sarsa = False
 
 Q = []
 stay = 0
@@ -118,6 +119,7 @@ def takeAction(s, a, bool=False):  # /* trickier :-) */
 
 def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
     global gamma #passed as parameter
+    global is_sarsa
     global rew
 
     R = rew #cost of movement
@@ -134,8 +136,7 @@ def update(s, a, s0):  # /* depends on SARSA vs Q-learning */
         Qmaxfuture = q(s0, aM)  # Q-learning, maximum future reward - Q value of next state
     Qt = q(s, a)
 
-    SARSA = False  # set to 1 for SARSA, 0 for Q-learning
-    if SARSA:
+    if is_sarsa:
         #SARSA
         Q[s][a] = float(Qt + alpha*(R + gamma*Qnext-Qt))
     else:
@@ -239,7 +240,7 @@ def printBestMoves():
     print(string)
 
 
-def rl(filename, interval, sec, a, e):
+def rl(filename, interval, sec, sarsa, a, e, g):
     global Q
     global rew
     global stay
@@ -251,6 +252,7 @@ def rl(filename, interval, sec, a, e):
     global double
     global heatmap
     global epsilon
+    global is_sarsa
     global backwards
 
     Q = []
@@ -258,15 +260,17 @@ def rl(filename, interval, sec, a, e):
     term = []
     count = 0
     alpha = a
+    gamma = g
     double = 0
     epsilon = e
     heatmap = []
     backwards = 0
+    is_sarsa = sarsa
 
     x = []
     y = []
     y_hat = 0
-    terminal_count = 0
+    terminal_count = 1
 
     board, start_state, my = load_grid(filename)
     start_time = time.time()
