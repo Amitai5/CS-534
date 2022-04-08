@@ -53,8 +53,8 @@ startTime = 0
 #     s
 
 # parameters
-alpha = 0.25 # learning rate - higher means faster
-epsilon = .1 # chance to explore
+alpha = 0.25  # learning rate - higher means faster
+epsilon = .1  # chance to explore
 
 
 # Load the board from the given file
@@ -75,6 +75,8 @@ def load_grid(filename):
 
     print(qCell)
     print(type(qCell[0, 0]))
+
+    x = []
 
 
     for i in range(len(grid)):
@@ -139,11 +141,16 @@ def determineAction(s, r=True):
 
 
 def explore():
-
     global timeR
-    # return random.random() > epsilon
+    policy = "g"
     timeR = time.time() - startTime
-    return timeR < sec / 2 or random.random() < timeR / sec
+    if policy == "e":
+        return random.random() > epsilon  # policy e (epsilon greedy)
+    elif policy == "f":
+        return timeR < sec / 2 or random.random() < timeR / sec  # policy f some pretty extreme heavy explore,
+        # then gradual towards greedy
+    elif policy == "g":
+        return random.random() < timeR / sec  # policy g, gradual start high explore, end greedy
 
 
 def tryA(a):
