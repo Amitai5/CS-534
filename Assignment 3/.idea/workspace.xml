@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4e85205d-39d4-48aa-85a6-a8b22e9adeea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/graphs/AlphaValues (0.25sec, QLearn).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphs/AlphaValues (0.25sec, SARSA).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphs/EpsilonValues (0.25sec, QLearn).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphs/EpsilonValues (0.25sec, SARSA).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphs/GammaValues (0.25sec, QLearn).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphs/GammaValues (0.25sec, SARSA).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Smart EpsilonValues (1sec, QLearn).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Smart EpsilonValues (1sec, SARSA).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Smart EpsilonValues (20sec, QLearn).png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/part1_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/part1_function.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/part1_grapher.py" beforeDir="false" afterPath="$PROJECT_DIR$/part1_grapher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,7 +43,6 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Assignment 2" />
   </component>
   <component name="RunManager">

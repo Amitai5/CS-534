@@ -12,13 +12,16 @@ epsilon = 0
 is_sarsa = False
 
 Q = []
+sec = 0
 stay = 0
 term = []
 count = 0
 double = 0
 heatmap = []
 board = None
+policy = None
 backwards = 0
+start_time = 0
 moves = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 
@@ -73,8 +76,19 @@ def determineAction(s, r=True):
 
 
 def explore():
+    global timeR
+    global policy
+    timeR = time.time() - start_time
+    if policy == "e":
+        return random.random() > epsilon  # policy e (epsilon greedy)
+    elif policy == "f":
+        return timeR < sec / 2 or random.random() < timeR / sec  # policy f some pretty extreme heavy explore,
+        # then gradual towards greedy
+    elif policy == "g":
+        return random.random() < timeR / sec  # policy g, gradual start high explore, end greedy
+    elif policy == "h":
+        return timeR < sec/10 or random.random() > .01
     return random.random() > epsilon
-    # return timeR < sec / 2 or random.random() <
 
 
 def tryA(a):
@@ -240,9 +254,10 @@ def printBestMoves():
     print(string)
 
 
-def rl(filename, interval, sec, sarsa, a, e, g):
+def rl(filename, interval, sec_time, sarsa, p, a, e, g):
     global Q
     global rew
+    global sec
     global stay
     global term
     global board
@@ -252,8 +267,10 @@ def rl(filename, interval, sec, sarsa, a, e, g):
     global double
     global heatmap
     global epsilon
+    global policy
     global is_sarsa
     global backwards
+    global start_time
 
     Q = []
     stay = 0
@@ -262,9 +279,11 @@ def rl(filename, interval, sec, sarsa, a, e, g):
     alpha = a
     gamma = g
     double = 0
+    policy = p
     epsilon = e
     heatmap = []
     backwards = 0
+    sec = sec_time
     is_sarsa = sarsa
 
     x = []
@@ -279,7 +298,7 @@ def rl(filename, interval, sec, sarsa, a, e, g):
     while time.time() - start_time < sec:
         s = start_state
         while notTerminal(s):
-            a = determineAction(s)
+            a = determineAction(s, p)
             s0 = takeAction(s, a)
             update(s, a, s0)
             count = count + 1

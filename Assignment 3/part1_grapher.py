@@ -11,6 +11,7 @@ default_alpha = 0.67
 default_gamma = 0.67
 default_epsilon = 0.20
 plot_scatter_graph = False
+smart_epsilon_range = ["e", "f", "g", "h"]
 epsilon_range = [0.01, 0.10, 0.30, 0.60, 0.90]
 gamma_range = [0.01, 0.25, 0.50, 0.75, 0.90, 1.00]
 alpha_range = [0.01, 0.25, 0.50, 0.75, 0.90, 1.00]
@@ -32,10 +33,14 @@ def test_param_values(use_sarsa, test_range, param_name, param_symbol):
         for i in range(1, 7):
             filename = os.getcwd() + "\\testBoards\\grid" + str(i) + ".txt"
 
-            alpha = test_point if param_type == "a" else default_alpha
-            gamma = test_point if param_type == "g" else default_gamma
-            epsilon = test_point if param_type == "e" else default_epsilon
-            time, rew = rl(filename, time_interval, max_time, use_sarsa, alpha, epsilon, gamma)
+            if param_type != "s":
+                alpha = test_point if param_type == "a" else default_alpha
+                gamma = test_point if param_type == "g" else default_gamma
+                epsilon = test_point if param_type == "e" else default_epsilon
+                time, rew = rl(filename, time_interval, max_time, use_sarsa, alpha, epsilon, gamma)
+            elif param_type == "s":
+                time, rew = rl(filename, time_interval, max_time, use_sarsa,
+                               test_point, default_alpha, default_epsilon, default_gamma)
 
             graph_points_x = [x + y for x, y in zip(graph_points_x, time)]
             graph_points_y = [x + y for x, y in zip(graph_points_y, rew)]
@@ -74,9 +79,11 @@ for algo_type in [False, True]:
     test_param_values(algo_type, alpha_range, "Alpha", "α")
     test_param_values(algo_type, gamma_range, "Gamma", "γ")
     test_param_values(algo_type, epsilon_range, "Epsilon", "ε")
+    test_param_values(algo_type, smart_epsilon_range, "Smart Epsilon", "ε")
 
 max_time = 20
-for algo_type in [False, True]:
+for algo_type in [True]:
     test_param_values(algo_type, alpha_range, "Alpha", "α")
     test_param_values(algo_type, gamma_range, "Gamma", "γ")
     test_param_values(algo_type, epsilon_range, "Epsilon", "ε")
+    test_param_values(algo_type, smart_epsilon_range, "Smart Epsilon", "ε")
