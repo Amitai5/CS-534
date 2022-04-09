@@ -69,12 +69,11 @@ def test_param_values(use_sarsa, test_range, param_name, param_symbol):
                 "Values (" + str(max_time) + "sec, " + use_sarsa_string + ".png")
     plt.clf()
 
-
-#max_time = 1
-#for algo_type in [False, True]:
-#    test_param_values(algo_type, alpha_range, "Alpha", "α")
-#    test_param_values(algo_type, gamma_range, "Gamma", "γ")
-#    test_param_values(algo_type, epsilon_range, "Epsilon", "ε")
+max_time = 1
+for algo_type in [False, True]:
+    test_param_values(algo_type, alpha_range, "Alpha", "α")
+    test_param_values(algo_type, gamma_range, "Gamma", "γ")
+    test_param_values(algo_type, epsilon_range, "Epsilon", "ε")
 
 max_time = 20
 for algo_type in [False, True]:
