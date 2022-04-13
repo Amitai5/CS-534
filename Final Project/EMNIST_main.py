@@ -22,9 +22,9 @@ test_dataset = EMNIST(root="data\\", split="byclass", download=True, train=False
                           tt.ToTensor()
                       ]))
 
-print("Total No of Images in EMNIST dataset:", len(dataset) + len(test_dataset))
-print("No of images in Training dataset:    ", len(dataset))
-print("No of images in Testing dataset:     ", len(test_dataset))
+print("EMNIST Dataset Count:", len(dataset) + len(test_dataset))
+print("Training Dataset:    ", len(dataset))
+print("Testing Dataset:     ", len(test_dataset))
 
 # Set the random seed to get same random split
 random_seed = 50
