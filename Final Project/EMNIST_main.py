@@ -38,3 +38,5 @@ train_ds, val_ds = random_split(dataset, [train_size, val_size])
 
 train_dl = DataLoader(train_ds, BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
 val_dl = DataLoader(val_ds, BATCH_SIZE*2, num_workers=4, pin_memory=True)
+
+helper.show_example(dataset[12])

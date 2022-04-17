@@ -32,7 +32,7 @@ def main():
     # Call your function or Class
     # me = Obaro(file, reward_per_action, gamma, time_to_learn, prob_of_moving)
     # print(me.get_height())
-    agent = Agent()
+    agent = Agent(file, reward_per_action, gamma, time_to_learn, prob_of_moving)
     agent.play(time_to_learn)
 
 
