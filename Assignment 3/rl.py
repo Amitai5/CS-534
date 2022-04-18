@@ -63,7 +63,7 @@ def load_grid(filename):
     global Q
     global heatmap
 
-    filename = os.getcwd() + "\\testBoards\\grid" + filename + ".txt"
+    # filename = os.getcwd() + "\\testBoards\\grid" + filename + ".txt"
 
     grid = pd.read_csv(filename, delimiter='\t',header=None).to_numpy()
     Q = copy.deepcopy(grid)
