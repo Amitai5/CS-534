@@ -1,42 +1,31 @@
-from torch.utils.data import DataLoader, random_split
-from torchvision.datasets import EMNIST
-import torchvision.transforms as tt
+from network_models.EMNIST_model import EMNIST_Net
+from ModelGrapher import create_accuracy_graph
+from EMNIST_data import load_dataset
+from NetworkTrainer import NetTrainer
 import EMNIST_helpers as helper
+from PIL import Image
+import numpy as np
 import torch
 
+EPOCHS = 8
+BATCH_SIZE = 40
+LEARNING_RATE = 0.05
 
-BATCH_SIZE = 400
-LEARNING_RATE = 0.01
+training_dataset, testing_dataset = load_dataset(augment_data=True, force_reload=False)
 
-dataset = EMNIST(root="data\\", split="byclass", download=True, train=True,
-                 transform=tt.Compose([
-                     lambda img: tt.functional.rotate(img, -90),
-                     lambda img: tt.functional.hflip(img),
-                     tt.ToTensor()
-                 ]))
+model = EMNIST_Net()
+trainer = NetTrainer(model, training_dataset, LEARNING_RATE)
+trainer.train(BATCH_SIZE, EPOCHS)
+create_accuracy_graph()
 
-test_dataset = EMNIST(root="data\\", split="byclass", download=True, train=False,
-                      transform=tt.Compose([
-                          lambda img: tt.functional.rotate(img, -90),
-                          lambda img: tt.functional.hflip(img),
-                          tt.ToTensor()
-                      ]))
+image_data = testing_dataset[10][0]
+x = torch.Tensor(np.array(image_data))
+result = model.forward(x).to("cpu")
+result = result.detach().numpy()
+letter = helper.to_char(max(np.where(result == max(result))[0]))
+print(result)
+print(letter)
 
-print("EMNIST Dataset Count:", len(dataset) + len(test_dataset))
-print("Training Dataset:    ", len(dataset))
-print("Testing Dataset:     ", len(test_dataset))
-
-# Set the random seed to get same random split
-random_seed = 50
-torch.manual_seed(random_seed)
-
-val_size = 50000
-train_size = len(dataset) - val_size
-
-# Dividing the dataset into training dataset and validation dataset
-train_ds, val_ds = random_split(dataset, [train_size, val_size])
-
-train_dl = DataLoader(train_ds, BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
-val_dl = DataLoader(val_ds, BATCH_SIZE*2, num_workers=4, pin_memory=True)
-
-helper.show_example(dataset[12])
+img_data = np.reshape(image_data, (28, 28))
+img = Image.fromarray(img_data, 'L')
+img.show()

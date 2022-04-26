@@ -155,3 +155,5 @@ Final Project/data/EMNIST/raw/emnist-mnist-train-images-idx3-ubyte
 Final Project/data/EMNIST/raw/emnist-mnist-train-labels-idx1-ubyte
 Final Project/data/EMNIST/raw/gzip.zip
 Final Project/data/Dictionary/misspelled_words_dataset.pkl
+*.png
+*.pkl
