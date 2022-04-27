@@ -1,58 +1,36 @@
-from EMNIST_helpers import to_onehot
-from numpy import asarray
-from PIL import Image
-import numpy as np
-import pickle
-import tqdm
-import os
-
-pickle_filename2 = os.getcwd() + "\\data\\EMNIST\\training_dataset.pkl"
-pickle_filename = os.getcwd() + "\\data\\EMNIST\\test_dataset.pkl"
-train_directory = os.getcwd() + "\\data\\EMNIST\\train_data"
-test_directory = os.getcwd() + "\\data\\EMNIST\\test_data"
+from DeviceDataLoader import DeviceDataLoader
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from torchvision.datasets import EMNIST
+import EMNIST_helpers as helper
+import torch
 
 
-def load_dataset(augment_data=True, force_reload=False):
+def load_dataset(batch_size):
     print("\nLoading Datasets...")
-    if force_reload or not os.path.exists(pickle_filename2):
-        compile_dataset(test_directory, pickle_filename2, augment_data=False)
-    if force_reload or not os.path.exists(pickle_filename):
-        compile_dataset(train_directory, pickle_filename, augment_data)
+    training_dataset = EMNIST(root="\\data\\", split="byclass", download=True, train=True,
+                              transform=transforms.Compose([
+                                  lambda img: transforms.functional.rotate(img, -90),
+                                  lambda img: transforms.functional.hflip(img),
+                                  transforms.ToTensor()
+                              ]))
 
-    training_data_file = open(pickle_filename, 'rb')
-    testing_data_file = open(pickle_filename2, 'rb')
-    training_dataset, testing_dataset = pickle.load(training_data_file), pickle.load(testing_data_file)
+    testing_dataset = EMNIST(root="\\data\\", split="byclass", download=True, train=False,
+                             transform=transforms.Compose([
+                                 lambda img: transforms.functional.rotate(img, -90),
+                                 lambda img: transforms.functional.hflip(img),
+                                 transforms.ToTensor()
+                             ]))
 
-    print("EMNIST Dataset Training Count: ", len(training_dataset))
-    print("EMNIST Dataset Testing Count: ", len(testing_dataset))
-    print("\n")
-    return training_dataset, testing_dataset
+    print("Total No of Images in EMNIST dataset:", len(training_dataset) + len(testing_dataset))
+    print("No of images in Training dataset:    ", len(training_dataset))
+    print("No of images in Testing dataset:     ", len(testing_dataset))
+    print("")
 
+    training_dataset = DataLoader(training_dataset, batch_size, shuffle=True)
+    testing_dataset = DataLoader(testing_dataset, batch_size * 2)
 
-def compile_dataset(directory, filename, augment_data):
-    dataset = []
-    for image_label in tqdm.tqdm(os.listdir(directory)):
-        current_directory = train_directory + "\\" + image_label
-        for image_filename in os.listdir(current_directory):
-            original_image = Image.open(current_directory + "\\" + image_filename).convert('L')
-
-            images = [original_image]
-            if augment_data:
-                images.extend(augment_image(original_image))
-
-            for img in images:
-                flattened_img = asarray(img, dtype=float).flatten()
-                dataset.append([flattened_img, to_onehot(image_label)])
-
-    np.random.shuffle(dataset)
-    dataset = dataset[:100000]
-    filehandler = open(filename, "wb")
-    pickle.dump(np.array(dataset, dtype=object), filehandler)
-
-
-def augment_image(image):
-    images = []
-    for rotation in [90, 180, 270]:
-        new_img = image.rotate(rotation)
-        images.append(new_img)
-    return images
+    device = helper.get_default_device()
+    test_dataloader = DeviceDataLoader(testing_dataset, device)
+    training_dataloader = DeviceDataLoader(training_dataset, device)
+    return training_dataloader, test_dataloader

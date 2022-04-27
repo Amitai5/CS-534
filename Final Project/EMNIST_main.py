@@ -1,31 +1,24 @@
-from network_models.EMNIST_model import EMNIST_Net
-from ModelGrapher import create_accuracy_graph
-from EMNIST_data import load_dataset
-from NetworkTrainer import NetTrainer
-import EMNIST_helpers as helper
-from PIL import Image
-import numpy as np
 import torch
 
+from ModelGrapher import create_accuracy_graph
+from NetworkTrainer import NetTrainer
+from EMNIST_model import EMNIST_Net
+import EMNIST_helpers as helper
+import EMNIST_data
+
 EPOCHS = 8
-BATCH_SIZE = 40
-LEARNING_RATE = 0.05
+BATCH_SIZE = 400
+LEARNING_RATE = 0.01
 
-training_dataset, testing_dataset = load_dataset(augment_data=True, force_reload=False)
+training_dataset, testing_dataset = EMNIST_data.load_dataset(BATCH_SIZE)
+model = EMNIST_Net(1, 62)
 
-model = EMNIST_Net()
-trainer = NetTrainer(model, training_dataset, LEARNING_RATE)
+trainer = NetTrainer(model, training_dataset, testing_dataset, LEARNING_RATE)
 trainer.train(BATCH_SIZE, EPOCHS)
+
 create_accuracy_graph()
 
-image_data = testing_dataset[10][0]
-x = torch.Tensor(np.array(image_data))
-result = model.forward(x).to("cpu")
-result = result.detach().numpy()
-letter = helper.to_char(max(np.where(result == max(result))[0]))
-print(result)
-print(letter)
-
-img_data = np.reshape(image_data, (28, 28))
-img = Image.fromarray(img_data, 'L')
-img.show()
+for data in testing_dataset:
+    img, label = data
+    predicted_idx = helper.to_index(model(img)[0])
+    helper.show_example(img[0], label[0], predicted_idx)
