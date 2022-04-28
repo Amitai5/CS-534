@@ -1,4 +1,3 @@
-from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -13,15 +12,6 @@ def show_example(img, label, predicted):
     plt.show()
 
 
-def show_batch(dl):
-    for images, labels in dl:
-        fig, ax = plt.subplots(figsize=(12, 12))
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.imshow(make_grid(images, nrow=20).permute(1, 2, 0))
-        break
-
-
 def get_default_device():
     if torch.cuda.is_available():
         return torch.device("cuda")
@@ -30,12 +20,7 @@ def get_default_device():
 
 
 def to_char(num):
-    if num < 10:
-        return str(num)
-    elif num < 36:
-        return chr(num+55)
-    else:
-        return chr(num+61)
+    return chr(num + 64)
 
 
 def to_index(one_hot):
@@ -45,6 +30,6 @@ def to_index(one_hot):
 
 
 def to_onehot(num):
-    arr = np.zeros(62)
+    arr = np.zeros(27)
     arr[num] = 1
     return arr

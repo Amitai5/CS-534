@@ -7,11 +7,11 @@ import EMNIST_helpers as helper
 import EMNIST_data
 
 EPOCHS = 8
-BATCH_SIZE = 400
-LEARNING_RATE = 0.01
+BATCH_SIZE = 100
+LEARNING_RATE = 1E-3
 
 training_dataset, testing_dataset = EMNIST_data.load_dataset(BATCH_SIZE)
-model = EMNIST_Net(1, 62)
+model = EMNIST_Net(1, 27)
 
 trainer = NetTrainer(model, training_dataset, testing_dataset, LEARNING_RATE)
 trainer.train(BATCH_SIZE, EPOCHS)

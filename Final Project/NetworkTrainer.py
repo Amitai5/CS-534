@@ -8,7 +8,7 @@ import time
 
 
 class NetTrainer:
-    def __init__(self, model, train_dataloader, test_dataloader, lr, weight_decay=1e-4):
+    def __init__(self, model, train_dataloader, test_dataloader, lr, weight_decay=1E-4):
         self.optimizer = optim.Adam(model.parameters(), lr, weight_decay=weight_decay)
         self.loss_function = nn.CrossEntropyLoss()
         self.device = helper.get_default_device()
@@ -25,9 +25,9 @@ class NetTrainer:
 
         matches = []
         for i in range(len(outputs)):
-            actual_idx = helper.to_index(y[i])
+            actual_idx = np.asarray(y[i].to("cpu"))
             predicted_idx = helper.to_index(outputs[i])
-            matches.append(bool(actual_idx == predicted_idx))
+            matches.append(bool(predicted_idx == actual_idx))
 
         acc = matches.count(True) / len(matches)
         loss = self.loss_function(outputs, y)
@@ -72,8 +72,8 @@ class NetTrainer:
 
                 # Logging the test data
                 val_acc, val_loss = self.testModel()
-                log_file.write(f"{round(time.time(), 3)},{round(float(acc), 2)},"
+                log_file.write(f"{epoch},{round(float(acc), 2)},"
                                f"{round(float(loss), 4)},{round(float(val_acc), 2)},{round(float(val_loss), 4)}\n")
 
-                print(f"Epoch: {epoch + 1}, \tVal-Loss: {val_loss},\tVal-Accuracy: {val_acc},\tTrain-Accuracy: {acc}\n")
+                print(f"Epoch: {epoch + 1}, \tVal-Loss: {round(val_loss, 4)},\tVal-Accuracy: {round(val_acc, 2)},\tTrain-Accuracy: {round(acc, 2)}\n")
                 time.sleep(0.1)  # Solves PyCharm console printing bug

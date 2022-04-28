@@ -6,7 +6,8 @@ def conv_block(in_channels, out_channels, pool=False):
     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
               nn.BatchNorm2d(out_channels),
               nn.ReLU(inplace=True)]
-    if pool: layers.append(nn.MaxPool2d(2))
+    if pool:
+        layers.append(nn.MaxPool2d(2))
     return nn.Sequential(*layers)
 
 
@@ -30,8 +31,8 @@ class EMNIST_Net(nn.Module):
         inputs = self.conv1(inputs)
         inputs = self.conv2(inputs)
         inputs = self.res1(inputs) + inputs
-        inputs = self.conv3(inputs)
-        inputs = self.conv4(inputs)
-        inputs = self.res2(inputs) + inputs
+        # inputs = self.conv3(inputs)
+        # inputs = self.conv4(inputs)
+        # inputs = self.res2(inputs) + inputs
         inputs = self.classifier(inputs)
         return inputs

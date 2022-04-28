@@ -3,32 +3,31 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import EMNIST
 import EMNIST_helpers as helper
-import torch
 
 
 def load_dataset(batch_size):
     print("\nLoading Datasets...")
-    training_dataset = EMNIST(root="\\data\\", split="byclass", download=True, train=True,
+    training_dataset = EMNIST(root="\\data\\", split="letters", download=True, train=True,
                               transform=transforms.Compose([
                                   lambda img: transforms.functional.rotate(img, -90),
                                   lambda img: transforms.functional.hflip(img),
                                   transforms.ToTensor()
                               ]))
 
-    testing_dataset = EMNIST(root="\\data\\", split="byclass", download=True, train=False,
+    testing_dataset = EMNIST(root="\\data\\", split="letters", download=True, train=False,
                              transform=transforms.Compose([
                                  lambda img: transforms.functional.rotate(img, -90),
                                  lambda img: transforms.functional.hflip(img),
                                  transforms.ToTensor()
                              ]))
 
-    print("Total No of Images in EMNIST dataset:", len(training_dataset) + len(testing_dataset))
+    print("Total No of Images in EMNIST-Letters dataset:", len(training_dataset) + len(testing_dataset))
     print("No of images in Training dataset:    ", len(training_dataset))
     print("No of images in Testing dataset:     ", len(testing_dataset))
     print("")
 
     training_dataset = DataLoader(training_dataset, batch_size, shuffle=True)
-    testing_dataset = DataLoader(testing_dataset, batch_size * 2)
+    testing_dataset = DataLoader(testing_dataset, batch_size, shuffle=True)
 
     device = helper.get_default_device()
     test_dataloader = DeviceDataLoader(testing_dataset, device)
