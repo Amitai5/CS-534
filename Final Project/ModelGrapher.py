@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 
 
-def create_accuracy_graph():
+def create_accuracy_graph(save_path):
     style.use("ggplot")
     contents = open("model.log", "r").read().split("\n")
 
@@ -29,11 +29,15 @@ def create_accuracy_graph():
     ax1 = plt.subplot2grid((2, 1), (0, 0))
     ax2 = plt.subplot2grid((2, 1), (1, 0), sharex=ax1)
 
-    ax1.plot(times, accuracies, label="acc")
-    ax1.plot(times, val_accs, label="val_acc")
+    ax1.plot(times, accuracies, label="train")
+    ax1.plot(times, val_accs, label="test")
     ax1.legend(loc=2)
 
-    ax2.plot(times, losses, label="loss")
-    ax2.plot(times, val_losses, label="val_loss")
+    ax2.plot(times, losses, label="train")
+    ax2.plot(times, val_losses, label="test")
     ax2.legend(loc=2)
+
+    ax1.set(xlabel="", ylabel="Accuracy %")
+    ax2.set(xlabel="Epochs", ylabel="Loss")
+    plt.savefig(save_path)
     plt.show()

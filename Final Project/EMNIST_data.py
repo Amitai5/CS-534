@@ -3,6 +3,8 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import EMNIST
 import EMNIST_helpers as helper
+import cv2
+import os
 
 
 def load_dataset(batch_size):
@@ -33,3 +35,10 @@ def load_dataset(batch_size):
     test_dataloader = DeviceDataLoader(testing_dataset, device)
     training_dataloader = DeviceDataLoader(training_dataset, device)
     return training_dataloader, test_dataloader
+
+
+def img2tensor(image):
+    transform = transforms.Compose([
+        transforms.ToTensor()
+    ])
+    return transform(image).reshape(1, 1, 28, 28)

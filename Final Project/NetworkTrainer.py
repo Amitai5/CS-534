@@ -72,8 +72,8 @@ class NetTrainer:
 
                 # Logging the test data
                 val_acc, val_loss = self.testModel()
-                log_file.write(f"{epoch},{round(float(acc), 2)},"
-                               f"{round(float(loss), 4)},{round(float(val_acc), 2)},{round(float(val_loss), 4)}\n")
+                log_file.write(f"{epoch + 1},{round(float(acc), 3)},"
+                               f"{round(float(loss), 4)},{round(float(val_acc), 3)},{round(float(val_loss), 4)}\n")
 
-                print(f"Epoch: {epoch + 1}, \tVal-Loss: {round(val_loss, 4)},\tVal-Accuracy: {round(val_acc, 2)},\tTrain-Accuracy: {round(acc, 2)}\n")
+                print(f"Epoch: {epoch + 1}, \tVal-Loss: {round(val_loss, 4)},\tVal-Accuracy: {round(val_acc, 3) * 100}%,\tTrain-Accuracy: {round(acc, 3) * 100}%\n")
                 time.sleep(0.1)  # Solves PyCharm console printing bug

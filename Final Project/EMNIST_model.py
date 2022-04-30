@@ -16,11 +16,6 @@ class EMNIST_Net(nn.Module):
         super().__init__()
         self.conv1 = conv_block(in_channels, 64)
         self.conv2 = conv_block(64, 128, pool=True)
-        self.res1 = nn.Sequential(conv_block(128, 128), conv_block(128, 128))
-
-        self.conv3 = conv_block(128, 256)
-        self.conv4 = conv_block(256, 512, pool=True)
-        self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
 
         self.classifier = nn.Sequential(nn.MaxPool2d(7),
                                         nn.Flatten(),
@@ -30,9 +25,5 @@ class EMNIST_Net(nn.Module):
     def forward(self, inputs):
         inputs = self.conv1(inputs)
         inputs = self.conv2(inputs)
-        inputs = self.res1(inputs) + inputs
-        # inputs = self.conv3(inputs)
-        # inputs = self.conv4(inputs)
-        # inputs = self.res2(inputs) + inputs
         inputs = self.classifier(inputs)
         return inputs
