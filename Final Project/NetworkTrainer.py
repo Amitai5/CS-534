@@ -8,7 +8,7 @@ import time
 
 
 class NetTrainer:
-    def __init__(self, model, train_dataloader, test_dataloader, lr, weight_decay=1E-4):
+    def __init__(self, model, log_file, train_dataloader, test_dataloader, lr, weight_decay=1E-4):
         self.optimizer = optim.Adam(model.parameters(), lr, weight_decay=weight_decay)
         self.loss_function = nn.CrossEntropyLoss()
         self.device = helper.get_default_device()
@@ -16,6 +16,7 @@ class NetTrainer:
         self.testing_data = test_dataloader
         self.model = model.to(self.device)
         self.weight_decay = weight_decay
+        self.log_file = log_file
         self.learning_rate = lr
 
     def fwd_pass(self, x, y, train=False):
@@ -59,7 +60,7 @@ class NetTrainer:
         print(f"Learning Rate: {self.learning_rate}, \tWeight Decay: {self.weight_decay}\n")
         torch.cuda.empty_cache()
 
-        with open("model.log", "r+") as log_file:
+        with open(self.log_file, "r+") as log_file:
             log_file.truncate(0)
 
             for epoch in range(epochs):

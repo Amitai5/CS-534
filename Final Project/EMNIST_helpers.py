@@ -21,7 +21,7 @@ def clean_results(results):
     for idx in sorted_results:
         normalized_value = results[idx] / max_value
         if normalized_value > 0.1:
-            letter_results.append([normalized_value, to_char(idx)])
+            letter_results.append((normalized_value, to_char(idx)))
     return letter_results
 
 
