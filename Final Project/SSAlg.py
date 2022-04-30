@@ -36,7 +36,9 @@ def sSpellAlg(word):
     baseString = string
     arr.sort(key=lambda x: x[0], reverse=True)
     print(arr)
-    print("result: ", spellCheck(string, arr))
+    result = spellCheck(string, arr)
+    print("result: ", result)
+    return result
 
 
 def spellCheck(string, todo):
