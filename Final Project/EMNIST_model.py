@@ -1,12 +1,10 @@
 import torch.nn as nn
 
 
-def conv_block(in_channels, out_channels, pool=False):
+def conv_block(in_channels, out_channels):
     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
               nn.BatchNorm2d(out_channels),
               nn.ReLU(inplace=True)]
-    if pool:
-        layers.append(nn.MaxPool2d(2))
     return nn.Sequential(*layers)
 
 
@@ -15,8 +13,9 @@ class EMNIST_Net(nn.Module):
         super().__init__()
         self.conv1 = conv_block(in_channels, 64)
         self.conv2 = conv_block(64, 128)
-        self.conv3 = conv_block(128, 256, pool=True)
+        self.conv3 = conv_block(128, 256)
 
+        self.pool_layer = nn.MaxPool2d(2)
         self.classifier = nn.Sequential(nn.MaxPool2d(7),
                                         nn.Flatten(),
                                         nn.Dropout(0.2),
@@ -26,5 +25,6 @@ class EMNIST_Net(nn.Module):
         inputs = self.conv1(inputs)
         inputs = self.conv2(inputs)
         inputs = self.conv3(inputs)
+        inputs = self.pool_layer(inputs)
         inputs = self.classifier(inputs)
         return inputs
