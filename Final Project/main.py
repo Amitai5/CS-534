@@ -4,7 +4,7 @@ from EMNIST_data import *
 import torch
 
 model = EMNIST_Net(1, 27)
-model.load_state_dict(torch.load(os.curdir + "\\results\\emnist\\model.pth"))
+model.load_state_dict(torch.load(os.curdir + "\\results\\model.pth"))
 model.eval()
 
 img = cv2.imread(os.curdir + "\\test_images\\test.png")
