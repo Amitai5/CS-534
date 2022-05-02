@@ -72,7 +72,8 @@ def addlettercombo(arr, c):
             # newstr[1] = newstr[1] + c[j][1]
             nprob = nprob * c[j][0]
             nstr = nstr + c[j][1]
-            newarr.append((nprob, nstr))
+            if nprob > .01:  # cutoff threshold
+                newarr.append((nprob, nstr))
     return newarr
 
 
@@ -90,7 +91,7 @@ def replaceNext(string, todo):
 dictInit()
 
 
-eg = [[(1, 'e'), (.34, 'a'), (.32, 'b')], [(1, 'E'), (.62, '%')], [(1, 't'), (.33, 'g')]]
+eg = [[(1, 'e'), (.34, 'a'), (.32, 'b')], [(1, 'e'), (.62, 'x')], [(1, 't'), (.33, 'g')]]
 
 sSpellAlg(eg)
 
