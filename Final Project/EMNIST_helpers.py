@@ -21,7 +21,7 @@ def clean_results(results):
     for idx in sorted_results:
         normalized_value = results[idx] / max_value
         if normalized_value > 0.1:
-            letter_results.append((normalized_value, to_char(idx).lower()))
+            letter_results.append((normalized_value, to_char(idx + 1).lower()))
     return letter_results
 
 
@@ -47,7 +47,7 @@ def to_index(one_hot):
 
 
 def to_onehot(num):
-    arr = np.zeros(27)
+    arr = np.zeros(26)
     arr[num] = 1
     return arr
 

@@ -11,7 +11,7 @@ WEIGHT_DECAY = 1E-4
 LEARNING_RATE = 5E-5
 
 training_dataset, testing_dataset = load_dataset(BATCH_SIZE)
-model = EMNIST_Net(1, 27)
+model = EMNIST_Net(1, 26)
 
 print("\nNeural Network Structure: ")
 print(model)

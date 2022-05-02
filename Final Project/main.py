@@ -3,15 +3,18 @@ from SSAlg import sSpellAlg
 from EMNIST_data import *
 import torch
 
-model = EMNIST_Net(1, 27)
+model = EMNIST_Net(1, 26)
 model.load_state_dict(torch.load(os.curdir + "\\results\\model.pth"))
 model.eval()
 
-img = cv2.imread(os.curdir + "\\test_images\\test.png")
+img = cv2.imread(os.curdir + "\\test_images\\test_1.png")
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+letter_count = round(len(img[1]) / 28)
+
+print("\nNetwork Result: ")
 
 results = []
-for i in range(0, 8):
+for i in range(0, letter_count):
     x_index = i * 29
     cropped_img = img[0:28, x_index:x_index+28]
 
@@ -19,9 +22,12 @@ for i in range(0, 8):
         cropped_img = img2tensor(cropped_img)
         result = model(cropped_img)[0]
         result = helper.clean_results(result)
-        print(result)
+        print(f"- Letter #{i + 1}: {result}")
         results.append(result)
 
 
-word = sSpellAlg(results)
-print(word)
+word, probability = sSpellAlg(results)
+
+print("\nAlgorithm Result: ")
+print(f"- Probability: {probability}")
+print(f"- Word: \"{word}\"")

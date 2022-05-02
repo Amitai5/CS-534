@@ -24,14 +24,18 @@ class NetTrainer:
             self.model.zero_grad()
         outputs = self.model(x)
 
-        matches = []
+        matches = 0
+        y_one_hots = []
         for i in range(len(outputs)):
-            actual_idx = np.asarray(y[i].to("cpu"))
             predicted_idx = helper.to_index(outputs[i])
-            matches.append(bool(predicted_idx == actual_idx))
+            actual_idx = y[i].to("cpu").detach().numpy() - 1  # The letter idx is not zero based...
+            y_one_hots.append(helper.to_onehot(actual_idx))
+            if predicted_idx == actual_idx:
+                matches += 1
 
-        acc = matches.count(True) / len(matches)
-        loss = self.loss_function(outputs, y)
+        y_one_hots = torch.Tensor(np.array(y_one_hots)).to(self.device)
+        loss = self.loss_function(outputs, y_one_hots)
+        acc = matches / len(outputs)
 
         if train:
             loss.backward()
