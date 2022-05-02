@@ -37,7 +37,11 @@ def sSpellAlg(word):
     # baseString = string
     arr.sort(key=lambda x: x[0], reverse=True)
     print(arr)
+    default = arr[0]
     result = spellCheck(arr)
+    if result is None:
+        print("no alternative found")
+        result = default
     print("result: ", result[1])
     print("prob: ", result[0])
     return result[1]
@@ -46,8 +50,10 @@ def sSpellAlg(word):
 
 def spellCheck(todo):
     string = todo.pop(0)
-    if string[1] in dict or not todo:
+    if string[1] in dict:
         return string
+    elif not todo:
+        return None
     else:
         return spellCheck(todo)
 
@@ -84,7 +90,7 @@ def replaceNext(string, todo):
 dictInit()
 
 
-eg = [[(1, 'e'), (.34, 'a'), (.32, 'b')], [(1, 'e'), (.62, 'f')], [(1, 't'), (.33, 'g')]]
+eg = [[(1, 'e'), (.34, 'a'), (.32, 'b')], [(1, 'E'), (.62, '%')], [(1, 't'), (.33, 'g')]]
 
 sSpellAlg(eg)
 
