@@ -1,9 +1,10 @@
 from EMNIST_model import EMNIST_Net
+from SSAlg import sSpellAlg
 from EMNIST_data import *
 import torch
 
 model = EMNIST_Net(1, 27)
-model.load_state_dict(torch.load(os.curdir + "\\results\\emnist\\model.pth"))
+model.load_state_dict(torch.load(os.curdir + "\\results\\model.pth"))
 model.eval()
 
 img = cv2.imread(os.curdir + "\\test_images\\test.png")
@@ -18,5 +19,9 @@ for i in range(0, 8):
         cropped_img = img2tensor(cropped_img)
         result = model(cropped_img)[0]
         result = helper.clean_results(result)
+        print(result)
         results.append(result)
 
+
+word = sSpellAlg(results)
+print(word)

@@ -8,7 +8,7 @@ import time
 
 
 class NetTrainer:
-    def __init__(self, model, log_file, train_dataloader, test_dataloader, lr, weight_decay=1E-4):
+    def __init__(self, model, log_file, train_dataloader, test_dataloader, lr, weight_decay):
         self.optimizer = optim.Adam(model.parameters(), lr, weight_decay=weight_decay)
         self.loss_function = nn.CrossEntropyLoss()
         self.device = helper.get_default_device()

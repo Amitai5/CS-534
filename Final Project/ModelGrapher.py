@@ -4,7 +4,7 @@ from matplotlib import style
 
 def create_accuracy_graph(save_path):
     style.use("ggplot")
-    contents = open("results/emnist/model.log", "r").read().split("\n")
+    contents = open("results/model.log", "r").read().split("\n")
 
     times = []
     losses = []

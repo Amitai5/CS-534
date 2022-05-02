@@ -8,14 +8,11 @@ baseString = ""
 def dictInit():
     global dict
     text_file = open("data/Dictionary/oxford_dictionary_words.txt", "r")
-    # lines = text_file.readlines()
     lines = text_file.read().split('\n')
-    # print(lines)
-    # print(len(lines))
+
     text_file.close()
-    # dict.add(lines)
     dict = set(lines)
-    # print(dict)
+
 
 
 def sSpellAlg(word):
@@ -30,11 +27,11 @@ def sSpellAlg(word):
     arr = [(1, "")]
     print(word)
     # new struct: [(.00, "string")]
+
     for i in range(len(word)):
         # pos = word[i]
         arr = addlettercombo(arr, word[i])
         # string = string + pos.pop(0)[1]
-
 
     # print(string)
     # baseString = string
@@ -44,6 +41,7 @@ def sSpellAlg(word):
     print("result: ", result[1])
     print("prob: ", result[0])
     return result[1]
+
 
 
 def spellCheck(todo):
@@ -75,11 +73,9 @@ def addlettercombo(arr, c):
 def replaceNext(string, todo):
     if todo:
         newC = todo.pop(0)
-        print("NewC: ", newC)
         index = newC[2]
         newstring = newC[1]
         string = string[:index] + newstring + string[index + 1:]
-        print(string)
         return string
     else:
         return string
@@ -87,6 +83,8 @@ def replaceNext(string, todo):
 
 dictInit()
 
-eg = [[(1, 'a'), (.34, 'e'), (.32, 'b')], [(1, 'f'), (.62, 'e')], [(1, 't'), (.33, 'g')]]
+
+eg = [[(1, 'e'), (.34, 'a'), (.32, 'b')], [(1, 'e'), (.62, 'f')], [(1, 't'), (.33, 'g')]]
 
 sSpellAlg(eg)
+
