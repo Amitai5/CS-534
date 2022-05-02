@@ -18,7 +18,7 @@ class EMNIST_Net(nn.Module):
         self.pool_layer = nn.MaxPool2d(2)
         self.classifier = nn.Sequential(nn.MaxPool2d(7),
                                         nn.Flatten(),
-                                        nn.Dropout(0.5),
+                                        nn.Dropout(0.2),
                                         nn.Linear(1024, num_classes))
 
     def forward(self, inputs):

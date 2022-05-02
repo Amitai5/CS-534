@@ -129,6 +129,4 @@ dmypy.json
 .pyre/
 
 # Custom ignores
-*.png
-*.pkl
 Final Project/data/EMNIST/raw/*
