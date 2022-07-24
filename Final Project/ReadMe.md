@@ -1,0 +1,4 @@
+## Running the Character Recognition Algorithm
+ 1. Configure your anaconda environment to include the following libraries (these libraries can also be found in the requirements.txt file): python (version 3.9.5), numpy (version 1.16.6), pytorch (version 1.11.0 with CUDA 11.3), torchvision (version 0.12.0), opencv (version 4.5.4), matplotlib (version 3.3.4), numpy (version 1.16.6), and tqdm (version 4.61.1).
+ 2. Find the image file you would like to run the algorithm on. Ensure that the image is a .jpg, .jpeg, or .png file and that each of the letters are within their respective 28-pixel by 28-pixel boxes.
+ 3. Using the image file path from the previous step, run the main.py file with the image file path as the first and only argument

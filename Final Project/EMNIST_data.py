@@ -1,22 +1,23 @@
+import os
+
 from DeviceDataLoader import DeviceDataLoader
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import EMNIST
 import EMNIST_helpers as helper
-import cv2
-import os
 
 
 def load_dataset(batch_size):
     print("\nLoading Datasets...")
-    training_dataset = EMNIST(root="\\data\\", split="letters", download=True, train=True,
+    save_location = os.curdir + "\\data\\"
+    training_dataset = EMNIST(root=save_location, split="letters", download=True, train=True,
                               transform=transforms.Compose([
                                   lambda img: transforms.functional.rotate(img, -90),
                                   lambda img: transforms.functional.hflip(img),
                                   transforms.ToTensor()
                               ]))
 
-    testing_dataset = EMNIST(root="\\data\\", split="letters", download=True, train=False,
+    testing_dataset = EMNIST(root=save_location, split="letters", download=True, train=False,
                              transform=transforms.Compose([
                                  lambda img: transforms.functional.rotate(img, -90),
                                  lambda img: transforms.functional.hflip(img),
